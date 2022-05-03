@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:feedy/usercontrols/search_plant.dart';
-import 'package:feedy/models/PlantType.dart';
+import 'package:feedy/widgets/search_card.widget.dart';
+import 'package:feedy/models/plant_type.model.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);

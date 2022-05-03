@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:feedy/components/auth_state.dart';
+import 'package:feedy/modules/authentication/auth_state.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);

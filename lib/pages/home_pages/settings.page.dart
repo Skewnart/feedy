@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:feedy/utils/constants.dart';
+import 'package:feedy/modules/database/db.data.dart';
+import 'package:feedy/extensions/buildcontext.ext.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);

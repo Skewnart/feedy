@@ -1,4 +1,4 @@
-import 'package:feedy/models/PlantType.dart';
+import 'package:feedy/models/plant_type.model.dart';
 import 'package:flutter/material.dart';
 
 class SearchPlant extends StatelessWidget {

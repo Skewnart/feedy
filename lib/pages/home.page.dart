@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:feedy/pages/home_pages/myplants_page.dart';
-import 'package:feedy/pages/home_pages/search_page.dart';
-import 'package:feedy/pages/home_pages/settings_page.dart';
-import 'package:feedy/components/auth_required_state.dart';
+import 'package:feedy/pages/home_pages/my_plants.page.dart';
+import 'package:feedy/pages/home_pages/search_plant.page.dart';
+import 'package:feedy/pages/home_pages/settings.page.dart';
+import 'package:feedy/modules/authentication/auth_required_state.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);

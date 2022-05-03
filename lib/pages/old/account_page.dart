@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase/supabase.dart';
-import 'package:feedy/components/auth_required_state.dart';
-import 'package:feedy/utils/constants.dart';
+import 'package:feedy/modules/authentication/auth_required_state.dart';
+import 'package:feedy/modules/database/db.data.dart';
+import 'package:feedy/extensions/buildcontext.ext.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({Key? key}) : super(key: key);

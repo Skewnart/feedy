@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:feedy/pages/old/account_page.dart';
-import 'package:feedy/pages/home_page.dart';
-import 'package:feedy/pages/login_page.dart';
-import 'package:feedy/pages/splash_page.dart';
+import 'package:feedy/pages/home.page.dart';
+import 'package:feedy/pages/login.page.dart';
+import 'package:feedy/pages/splash.page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
