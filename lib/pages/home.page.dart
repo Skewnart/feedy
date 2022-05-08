@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:feedy/pages/home_pages/my_plants.page.dart';
-import 'package:feedy/pages/home_pages/search_plant.page.dart';
+import 'package:feedy/pages/home_pages/catalog.page.dart';
 import 'package:feedy/pages/home_pages/settings.page.dart';
 import 'package:feedy/modules/authentication/auth_required_state.dart';
 
@@ -16,9 +16,9 @@ class _MyHomePageState extends AuthRequiredState<MyHomePage> {
 
   static const List<PageOption> _widgetOptions = <PageOption>[
     PageOption(
-      title: "Recherche",
+      title: "Catalogue",
       icon: Icon(Icons.search),
-      child: SearchPage(),
+      child: CatalogPage(),
     ),
     PageOption(
       title: "Mes plantes",

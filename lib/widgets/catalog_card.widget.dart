@@ -1,8 +1,8 @@
 import 'package:feedy/models/plant_type.model.dart';
 import 'package:flutter/material.dart';
 
-class SearchPlant extends StatelessWidget {
-  const SearchPlant({Key? key, required this.plant_type}) : super(key: key);
+class CatalogCard extends StatelessWidget {
+  const CatalogCard({Key? key, required this.plant_type}) : super(key: key);
 
   final PlantType plant_type;
 

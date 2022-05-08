@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:feedy/widgets/search_card.widget.dart';
+import 'package:feedy/widgets/catalog_card.widget.dart';
 import 'package:feedy/models/plant_type.model.dart';
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
+class CatalogPage extends StatefulWidget {
+  const CatalogPage({Key? key}) : super(key: key);
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  State<CatalogPage> createState() => _CatalogPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _CatalogPageState extends State<CatalogPage> {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -25,7 +25,7 @@ class _SearchPageState extends State<SearchPage> {
         child: Padding(
           padding: const EdgeInsets.only(top: 60, bottom: 40),
           child: Text(
-            "Recherche",
+            "Catalogue",
             style: Theme.of(context).textTheme.headline3,
           ),
         ),
@@ -37,7 +37,7 @@ class _SearchPageState extends State<SearchPage> {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
           children: List.generate(PlantType.PlantTypes.length, (index) {
-            return SearchPlant(
+            return CatalogCard(
               plant_type: PlantType.PlantTypes[index],
             );
           }),
