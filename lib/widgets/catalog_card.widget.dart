@@ -6,55 +6,29 @@ class CatalogCard extends StatelessWidget {
 
   final PlantType plant_type;
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      child: Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            child: Image.asset(plant_type.image),
-          ),
-          Positioned.fill(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                alignment: Alignment.bottomCenter,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(80),
-                ),
-                child: Text(
-                  plant_type.name,
-                  style: const TextStyle(color: Colors.white, fontSize: 18.0),
-                ),
-              ),
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Image.asset(
+              plant_type.image,
+              fit: BoxFit.contain,
             ),
           ),
-          // Container(
-          //   padding: const EdgeInsets.all(8),
-          //   alignment: Alignment.bottomCenter,
-          //   decoration: BoxDecoration(
-          //     gradient: LinearGradient(
-          //       begin: Alignment.topCenter,
-          //       end: Alignment.bottomCenter,
-          //       colors: <Color>[
-          //         Colors.black.withAlpha(0),
-          //         Colors.black12,
-          //         Colors.black45
-          //       ],
-          //     ),
-          //   ),
-          //   child: Text(
-          //     plant_type.name,
-          //     style: const TextStyle(color: Colors.white, fontSize: 16.0),
-          //   ),
-          // ),
-        ],
-      ),
+        ),
+        Text(
+          plant_type.name,
+          style: const TextStyle(fontSize: 18.0),
+        ),
+      ],
     );
   }
 }
