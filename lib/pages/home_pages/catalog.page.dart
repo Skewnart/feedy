@@ -24,11 +24,12 @@ class _CatalogPageState extends State<CatalogPage> {
       mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 20),
+        Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 20),
           child: Text(
             'Catalogue',
             textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline3,
           ),
         ),
         Padding(
