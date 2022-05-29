@@ -1,3 +1,9 @@
+import 'dart:developer';
+
+import 'package:feedy/models/my_plant.model.dart';
+import 'package:feedy/widgets/my_plants_card.widget.dart';
+import 'package:feedy/models/plant_type.model.dart';
+import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
 
 class MyplantsPage extends StatefulWidget {
@@ -8,35 +14,95 @@ class MyplantsPage extends StatefulWidget {
 }
 
 class _MyplantsPageState extends State<MyplantsPage> {
-  int _counter = 0;
+  late TextEditingController textController;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  @override
+  void initState() {
+    super.initState();
+    textController = TextEditingController();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Center(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 60, bottom: 40),
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 20),
           child: Text(
-            "Mes plantes",
+            'Mes plantes',
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headline3,
           ),
         ),
-      ),
-      Expanded(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
-          children: const [
-            Text("Plante 1"),
-            Text("Plante 2"),
-          ],
+        Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 20),
+          child: Card(
+            elevation: 3,
+            child: Container(
+              height: 50,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
+                    child: Icon(
+                      Icons.search,
+                      color: Colors.black,
+                      size: 24,
+                    ),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: textController,
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        hintText: 'Rechercher ici...',
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x00000000),
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x00000000),
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
-    ]);
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(12, 5, 12, 0),
+            children: [
+              FutureBuilder<List<MyPlant>>(
+                future: Services.of(context).myPlantsService.getPlants(),
+                builder: (context, snapshot) {
+                  final plants = (snapshot.data ?? [])
+                    ..sort((x, y) => y.id - x.id);
+                  return Column(
+                    children: plants.map(_toPlantWidget).toList(),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _toPlantWidget(MyPlant plant) {
+    return MyPlantCard(
+      plant: plant,
+    );
   }
 }
