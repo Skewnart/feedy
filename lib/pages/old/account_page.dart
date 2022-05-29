@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:supabase/supabase.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:feedy/modules/authentication/auth_required_state.dart';
-import 'package:feedy/modules/database/db.data.dart';
+import 'package:feedy/services/services.dart';
 import 'package:feedy/extensions/buildcontext.ext.dart';
 
 class AccountPage extends StatefulWidget {
@@ -21,7 +21,7 @@ class _AccountPageState extends AuthRequiredState<AccountPage> {
     setState(() {
       _loading = true;
     });
-    final response = await supabase
+    final response = await Supabase.instance.client
         .from('profiles')
         .select()
         .eq('id', userId)
@@ -48,14 +48,17 @@ class _AccountPageState extends AuthRequiredState<AccountPage> {
     });
     final userName = _usernameController.text;
     final website = _websiteController.text;
-    final user = supabase.auth.currentUser;
+    final user = Services.of(context).authService.currentUser;
     final updates = {
       'id': user!.id,
       'username': userName,
       'website': website,
       'updated_at': DateTime.now().toIso8601String(),
     };
-    final response = await supabase.from('profiles').upsert(updates).execute();
+    final response = await Supabase.instance.client
+        .from('profiles')
+        .upsert(updates)
+        .execute();
     final error = response.error;
     if (error != null) {
       context.showErrorSnackBar(message: error.message);
@@ -68,7 +71,7 @@ class _AccountPageState extends AuthRequiredState<AccountPage> {
   }
 
   Future<void> _signOut() async {
-    final response = await supabase.auth.signOut();
+    final response = await Services.of(context).authService.signOut();
     final error = response.error;
     if (error != null) {
       context.showErrorSnackBar(message: error.message);

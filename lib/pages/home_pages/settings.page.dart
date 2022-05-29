@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:feedy/modules/database/db.data.dart';
+import 'package:feedy/services/services.dart';
 import 'package:feedy/extensions/buildcontext.ext.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -19,7 +19,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _signOut() async {
-    final response = await supabase.auth.signOut();
+    final response = await Services.of(context).authService.signOut();
     final error = response.error;
     if (error != null) {
       context.showErrorSnackBar(message: error.message);

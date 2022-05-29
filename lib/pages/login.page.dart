@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase/supabase.dart';
 import 'package:feedy/modules/authentication/auth_state.dart';
-import 'package:feedy/modules/database/db.data.dart';
 import 'package:feedy/extensions/buildcontext.ext.dart';
+import 'package:feedy/services/services.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class _LoginPageState extends AuthState<LoginPage> {
     setState(() {
       _isLoading = true;
     });
-    final response = await supabase.auth.signIn(
+    final response = await Services.of(context).authService.signIn(
         email: _emailController.text,
         options: AuthOptions(
             redirectTo: kIsWeb
