@@ -9,10 +9,24 @@ class MyPlantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final int wateringDays =
+        plant.remainWatering < 0 ? 0 : plant.remainWatering;
+    final Color wateringColor = wateringDays == 0
+        ? Colors.red
+        : (wateringDays <= 2 ? Colors.orange : Colors.green);
+
+    final int mistingDays = plant.remainMisting < 0 ? 0 : plant.remainMisting;
+    final Color mistingColor = mistingDays == 0
+        ? Colors.red
+        : (mistingDays <= 2 ? Colors.orange : Colors.green);
+
     return Card(
       clipBehavior: Clip.antiAliasWithSaveLayer,
       color: Color(0xFFFFFFFF),
       elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -31,22 +45,26 @@ class MyPlantCard extends StatelessWidget {
                 children: [
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Text(
-                          (plant.name ?? "sans nom"),
+                    child: Text(
+                      plant.type.name,
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text(
+                        'Nom :',
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                        child: Text(
+                          plant.name ?? "---",
                           style: Theme.of(context).textTheme.bodyText1,
                         ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
-                          child: Text(
-                            plant.type.name,
-                            style: Theme.of(context).textTheme.bodyText2,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.max,
@@ -58,71 +76,70 @@ class MyPlantCard extends StatelessWidget {
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                         child: Text(
-                          '1 jour',
-                          style: Theme.of(context).textTheme.bodyText1,
+                          '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              ?.copyWith(color: wateringColor),
                         ),
                       ),
                     ],
                   ),
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        'Brumisation :',
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
-                        child: Text(
-                          '/',
-                          style: Theme.of(context).textTheme.bodyText1,
+                  if (plant.type.intervalMisting > 0)
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Text(
+                          'Brumisation :',
+                          style: Theme.of(context).textTheme.bodyText2,
                         ),
-                      ),
-                    ],
-                  ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                          child: Text(
+                            '$mistingDays jour${mistingDays > 1 ? "s" : ""}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: mistingColor),
+                          ),
+                        ),
+                      ],
+                    ),
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TextButton(
-                          onPressed: () {
-                            print('Button pressed ...');
-                          },
-                          child: const Text("Arroser"),
-                          // style: Theme.of(context).buttonTheme,
-                          // options: FFButtonOptions(
-                          //   width: 80,
-                          //   height: 20,
-                          //   color: Theme.of(context).primaryColor,
-                          //   textStyle:
-                          //       Theme.of(context).textTheme.subtitle2,
-                          //   borderSide: BorderSide(
-                          //     color: Colors.transparent,
-                          //     width: 1,
-                          //   ),
-                          //   borderRadius: 12,
-                          // ),
+                        SizedBox(
+                          height: 30,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                                foregroundColor: MaterialStateProperty.all(
+                              Colors.white,
+                            )),
+                            onPressed: () {
+                              print('Button pressed ...');
+                            },
+                            child: const Text("Arroser"),
+                          ),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            print('Button pressed ...');
-                          },
-                          child: const Text('Brumiser'),
-                          // options: FFButtonOptions(
-                          //   width: 80,
-                          //   height: 20,
-                          //   color: Theme.of(context).primaryColor,
-                          //   textStyle:
-                          //       Theme.of(context).textTheme.subtitle2,
-                          //   borderSide: BorderSide(
-                          //     color: Colors.transparent,
-                          //     width: 1,
-                          //   ),
-                          //   borderRadius: 12,
-                          // ),
-                        ),
+                        if (plant.type.intervalMisting > 0)
+                          SizedBox(
+                            height: 30,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Color.fromARGB(255, 217, 231, 180)),
+                                  foregroundColor: MaterialStateProperty.all(
+                                    Colors.lightGreen,
+                                  )),
+                              onPressed: () {
+                                print('Button pressed ...');
+                              },
+                              child: const Text("Brumiser"),
+                            ),
+                          ),
                       ],
                     ),
                   ),
