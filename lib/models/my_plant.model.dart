@@ -7,5 +7,13 @@ class MyPlant {
   final DateTime lastWatering;
   final DateTime lastMisting;
 
-  MyPlant(this.id, this.name, this.type, this.lastWatering, this.lastMisting);
+  late final int remainWatering;
+  late final int remainMisting;
+
+  MyPlant(this.id, this.name, this.type, this.lastWatering, this.lastMisting) {
+    remainWatering =
+        type.intervalWatering - DateTime.now().difference(lastWatering).inDays;
+    remainMisting =
+        type.intervalMisting - DateTime.now().difference(lastMisting).inDays;
+  }
 }
