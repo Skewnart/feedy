@@ -24,6 +24,6 @@ class MyPlantsService {
         result['name'],
         PlantType.PlantTypes[result['type'] - 1],
         DateTime.parse(result['last_watering']),
-        DateTime.parse(result['last_watering']));
+        DateTime.parse(result['last_misting']));
   }
 }

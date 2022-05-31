@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:feedy/models/my_plant.model.dart';
 import 'package:feedy/widgets/my_plants_card.widget.dart';
@@ -87,7 +88,12 @@ class _MyplantsPageState extends State<MyplantsPage> {
                 future: Services.of(context).myPlantsService.getPlants(),
                 builder: (context, snapshot) {
                   final plants = (snapshot.data ?? [])
-                    ..sort((x, y) => y.id - x.id);
+                    ..sort((x, y) => (x.type.intervalMisting > 0
+                            ? min(x.remainWatering, x.remainMisting)
+                            : x.remainWatering)
+                        .compareTo(y.type.intervalMisting > 0
+                            ? min(y.remainWatering, y.remainMisting)
+                            : y.remainWatering));
                   return Column(
                     children: plants.map(_toPlantWidget).toList(),
                   );
