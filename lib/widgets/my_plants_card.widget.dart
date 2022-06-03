@@ -1,7 +1,6 @@
 import 'package:feedy/models/my_plant.model.dart';
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MyPlantCard extends StatelessWidget {
   const MyPlantCard({Key? key, required this.plant}) : super(key: key);

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:feedy/models/plant_type.model.dart';
 
