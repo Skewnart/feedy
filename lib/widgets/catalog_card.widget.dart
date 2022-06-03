@@ -1,4 +1,5 @@
 import 'package:feedy/models/plant_type.model.dart';
+import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
 
 class CatalogCard extends StatelessWidget {
@@ -18,10 +19,21 @@ class CatalogCard extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Image.asset(
-              // "assets/${plant_type.imageName}",
-              "assets/images/potdefleur7.png",
-              fit: BoxFit.contain,
+            child: FutureBuilder<Image>(
+              future: Services.plantTypesService.getImageFromPlantType(
+                plant_type,
+                width: null,
+                height: null,
+                fit: BoxFit.contain,
+              ),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!;
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+                return const Text("...");
+              },
             ),
           ),
         ),

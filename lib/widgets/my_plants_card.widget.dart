@@ -1,5 +1,7 @@
 import 'package:feedy/models/my_plant.model.dart';
+import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MyPlantCard extends StatelessWidget {
   const MyPlantCard({Key? key, required this.plant}) : super(key: key);
@@ -29,12 +31,21 @@ class MyPlantCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
-          Image.asset(
-            // "assets/${plant.type.imageName}",
-            "assets/images/potdefleur7.png",
-            width: 100,
-            height: 100,
-            fit: BoxFit.cover,
+          FutureBuilder<Image>(
+            future: Services.plantTypesService.getImageFromPlantType(
+              plant.type,
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return snapshot.data!;
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+              return const Text("...");
+            },
           ),
           Expanded(
             child: Padding(
