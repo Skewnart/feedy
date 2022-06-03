@@ -19,7 +19,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _signOut() async {
-    final response = await Services.of(context).authService.signOut();
+    final response = await Services.authService.signOut();
     final error = response.error;
     if (error != null) {
       context.showErrorSnackBar(message: error.message);

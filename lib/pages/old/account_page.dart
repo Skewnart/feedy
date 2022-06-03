@@ -48,7 +48,7 @@ class _AccountPageState extends AuthRequiredState<AccountPage> {
     });
     final userName = _usernameController.text;
     final website = _websiteController.text;
-    final user = Services.of(context).authService.currentUser;
+    final user = Services.authService.currentUser;
     final updates = {
       'id': user!.id,
       'username': userName,
@@ -71,7 +71,7 @@ class _AccountPageState extends AuthRequiredState<AccountPage> {
   }
 
   Future<void> _signOut() async {
-    final response = await Services.of(context).authService.signOut();
+    final response = await Services.authService.signOut();
     final error = response.error;
     if (error != null) {
       context.showErrorSnackBar(message: error.message);

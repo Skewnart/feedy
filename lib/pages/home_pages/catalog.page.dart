@@ -1,6 +1,7 @@
 import 'package:feedy/widgets/catalog_card.widget.dart';
 import 'package:feedy/models/plant_type.model.dart';
 import 'package:flutter/material.dart';
+import 'package:feedy/services/services.dart';
 
 class CatalogPage extends StatefulWidget {
   const CatalogPage({Key? key}) : super(key: key);
@@ -76,17 +77,33 @@ class _CatalogPageState extends State<CatalogPage> {
           ),
         ),
         Expanded(
-          child: GridView.count(
-            padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
-            crossAxisCount: 2,
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 5,
-            scrollDirection: Axis.vertical,
-            children: List.generate(PlantType.PlantTypes.length, (index) {
-              return CatalogCard(
-                plant_type: PlantType.PlantTypes[index],
-              );
-            }),
+          child: FutureBuilder<List<PlantType>>(
+            future: Services.plantTypesService.getPlantTypes(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
+                  child: GridView.builder(
+                    itemCount: snapshot.data!.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 5,
+                    ),
+                    itemBuilder: (context, index) {
+                      return CatalogCard(
+                        plant_type: snapshot.data![index],
+                      );
+                    },
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text(
+                    "Erreur dans le chargement des données : ${snapshot.error}");
+              }
+              return const Text("Chargement des données...");
+            },
           ),
         ),
       ],

@@ -15,6 +15,8 @@ Future<void> main() async {
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrYWtwZXVlaW5iaXduc3J6eXhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDkyNTkyMDAsImV4cCI6MTk2NDgzNTIwMH0.FpVjbCgGgatvgRwrw5CIcxeunUoxAaALvHF6kuuYon8',
   );
+  Services.initialize();
+
   runApp(MyApp());
 }
 
@@ -24,29 +26,26 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Services(
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.lightGreen,
-          textTheme: GoogleFonts.montserratTextTheme(
-                  Theme.of(context).textTheme)
-              .copyWith(
-                  // headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.lightGreen,
+        textTheme: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+            .copyWith(
+                // headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
 
-                  ),
-        ),
-        ///////////////////////////################################
-        // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-        ///////////////////////////################################
-        initialRoute: '/',
-        routes: <String, WidgetBuilder>{
-          '/': (_) => const SplashPage(),
-          '/login': (_) => const LoginPage(),
-          '/account': (_) => const AccountPage(),
-          '/home': (_) => const MyHomePage(),
-        },
+                ),
       ),
+      ///////////////////////////################################
+      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      ///////////////////////////################################
+      initialRoute: '/',
+      routes: <String, WidgetBuilder>{
+        '/': (_) => const SplashPage(),
+        '/login': (_) => const LoginPage(),
+        '/account': (_) => const AccountPage(),
+        '/home': (_) => const MyHomePage(),
+      },
     );
   }
 }

@@ -20,7 +20,7 @@ class _LoginPageState extends AuthState<LoginPage> {
     setState(() {
       _isLoading = true;
     });
-    final response = await Services.of(context).authService.signIn(
+    final response = await Services.authService.signIn(
         email: _emailController.text,
         options: AuthOptions(
             redirectTo: kIsWeb

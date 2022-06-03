@@ -19,7 +19,8 @@ class CatalogCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Image.asset(
-              plant_type.image,
+              // "assets/${plant_type.imageName}",
+              "assets/images/potdefleur7.png",
               fit: BoxFit.contain,
             ),
           ),

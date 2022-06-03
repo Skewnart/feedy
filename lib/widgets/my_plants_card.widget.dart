@@ -1,5 +1,4 @@
 import 'package:feedy/models/my_plant.model.dart';
-import 'package:feedy/models/my_plant.model.dart';
 import 'package:flutter/material.dart';
 
 class MyPlantCard extends StatelessWidget {
@@ -31,7 +30,8 @@ class MyPlantCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           Image.asset(
-            plant.type.image,
+            // "assets/${plant.type.imageName}",
+            "assets/images/potdefleur7.png",
             width: 100,
             height: 100,
             fit: BoxFit.cover,
