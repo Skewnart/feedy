@@ -43,7 +43,13 @@ class MyPlantCard extends StatelessWidget {
               } else if (snapshot.hasError) {
                 return Text("${snapshot.error}");
               }
-              return const Text("...");
+              return const SizedBox(
+                height: 100,
+                width: 100,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
             },
           ),
           Expanded(

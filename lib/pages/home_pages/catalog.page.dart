@@ -102,7 +102,9 @@ class _CatalogPageState extends State<CatalogPage> {
                 return Text(
                     "Erreur dans le chargement des données : ${snapshot.error}");
               }
-              return const Text("Chargement des données...");
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             },
           ),
         ),
