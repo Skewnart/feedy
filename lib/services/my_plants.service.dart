@@ -1,4 +1,5 @@
 import 'package:feedy/services/services.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:feedy/models/my_plant.model.dart';
 import 'package:feedy/models/plant_type.model.dart';
@@ -34,5 +35,17 @@ class MyPlantsService {
       }
     }
     throw Exception("Type ${result['plant_type_id']} not found");
+  }
+
+  Future<PostgrestResponse<dynamic>> water(MyPlant plant) async {
+    return (await _client.from(plantstable).update({
+      'last_watering': DateFormat('yyyy-MM-dd').format(DateTime.now())
+    }).match({'id': plant.id}).execute());
+  }
+
+  Future<PostgrestResponse<dynamic>> mist(MyPlant plant) async {
+    return (await _client.from(plantstable).update({
+      'last_misting': DateFormat('yyyy-MM-dd').format(DateTime.now())
+    }).match({'id': plant.id}).execute());
   }
 }

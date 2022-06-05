@@ -93,6 +93,7 @@ class _MyplantsPageState extends State<MyplantsPage> {
                   itemBuilder: (BuildContext, index) {
                     return MyPlantCard(
                       plant: plants[index],
+                      notifyParent: refresh,
                     );
                   },
                   itemCount: plants.length,
@@ -113,9 +114,7 @@ class _MyplantsPageState extends State<MyplantsPage> {
     );
   }
 
-  Widget _toPlantWidget(MyPlant plant) {
-    return MyPlantCard(
-      plant: plant,
-    );
+  refresh() {
+    setState(() {});
   }
 }

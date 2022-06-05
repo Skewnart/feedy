@@ -1,21 +1,31 @@
+import 'package:feedy/extensions/buildcontext.ext.dart';
 import 'package:feedy/models/my_plant.model.dart';
+import 'package:feedy/modules/authentication/auth_state.dart';
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
 
-class MyPlantCard extends StatelessWidget {
-  const MyPlantCard({Key? key, required this.plant}) : super(key: key);
+class MyPlantCard extends StatefulWidget {
+  const MyPlantCard({Key? key, required this.plant, required this.notifyParent})
+      : super(key: key);
 
+  final Function() notifyParent;
   final MyPlant plant;
 
   @override
+  MyPlantCardState createState() => MyPlantCardState();
+}
+
+class MyPlantCardState extends AuthState<MyPlantCard> {
+  @override
   Widget build(BuildContext context) {
     final int wateringDays =
-        plant.remainWatering < 0 ? 0 : plant.remainWatering;
+        widget.plant.remainWatering < 0 ? 0 : widget.plant.remainWatering;
     final Color wateringColor = wateringDays == 0
         ? Colors.red
         : (wateringDays <= 2 ? Colors.orange : Colors.green);
 
-    final int mistingDays = plant.remainMisting < 0 ? 0 : plant.remainMisting;
+    final int mistingDays =
+        widget.plant.remainMisting < 0 ? 0 : widget.plant.remainMisting;
     final Color mistingColor = mistingDays == 0
         ? Colors.red
         : (mistingDays <= 2 ? Colors.orange : Colors.green);
@@ -32,7 +42,7 @@ class MyPlantCard extends StatelessWidget {
         children: [
           FutureBuilder<Image>(
             future: Services.plantTypesService.getImageFromPlantType(
-              plant.type,
+              widget.plant.type,
               width: 100,
               height: 100,
               fit: BoxFit.cover,
@@ -62,7 +72,7 @@ class MyPlantCard extends StatelessWidget {
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
                     child: Text(
-                      plant.type.name,
+                      widget.plant.type.name,
                       style: Theme.of(context).textTheme.headline6,
                     ),
                   ),
@@ -76,7 +86,7 @@ class MyPlantCard extends StatelessWidget {
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                         child: Text(
-                          plant.name ?? "---",
+                          widget.plant.name ?? "---",
                           style: Theme.of(context).textTheme.bodyText1,
                         ),
                       ),
@@ -101,7 +111,7 @@ class MyPlantCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (plant.type.intervalMisting > 0)
+                  if (widget.plant.type.intervalMisting > 0)
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
@@ -135,12 +145,12 @@ class MyPlantCard extends StatelessWidget {
                               Colors.white,
                             )),
                             onPressed: () {
-                              print('Button pressed ...');
+                              _waterClick();
                             },
                             child: const Text("Arroser"),
                           ),
                         ),
-                        if (plant.type.intervalMisting > 0)
+                        if (widget.plant.type.intervalMisting > 0)
                           SizedBox(
                             height: 30,
                             child: ElevatedButton(
@@ -151,7 +161,7 @@ class MyPlantCard extends StatelessWidget {
                                     Colors.lightGreen,
                                   )),
                               onPressed: () {
-                                print('Button pressed ...');
+                                _mistClick();
                               },
                               child: const Text("Brumiser"),
                             ),
@@ -169,6 +179,64 @@ class MyPlantCard extends StatelessWidget {
             size: 24,
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _waterClick() async {
+    final name = widget.plant.name ?? widget.plant.type.name;
+    context.showAsking(
+      title: "Arrosage imminent",
+      question: "Voulez-vous arroser $name ?",
+      noButton: TextButton(
+        child: const Text("Non"),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
+      yesButton: TextButton(
+        child: const Text("Oui"),
+        onPressed: () async {
+          final response = await Services.myPlantsService.water(widget.plant);
+          if (!response.hasError) {
+            widget.notifyParent();
+            context.showSnackBar(message: "$name a été arrosée avec succès !");
+          } else {
+            context.showErrorSnackBar(
+                message: "$name n'a pas pu être arrosée !");
+            print(response.error);
+          }
+          Navigator.of(context).pop();
+        },
+      ),
+    );
+  }
+
+  Future<void> _mistClick() async {
+    final name = widget.plant.name ?? widget.plant.type.name;
+    context.showAsking(
+      title: "Brumisation imminente",
+      question: "Voulez-vous brumiser $name ?",
+      noButton: TextButton(
+        child: const Text("Non"),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
+      yesButton: TextButton(
+        child: const Text("Oui"),
+        onPressed: () async {
+          final response = await Services.myPlantsService.mist(widget.plant);
+          if (!response.hasError) {
+            widget.notifyParent();
+            context.showSnackBar(message: "$name a été brumisée avec succès !");
+          } else {
+            context.showErrorSnackBar(
+                message: "$name n'a pas pu être brumisée !");
+            print(response.error);
+          }
+          Navigator.of(context).pop();
+        },
       ),
     );
   }
