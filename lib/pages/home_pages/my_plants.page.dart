@@ -12,12 +12,18 @@ class MyplantsPage extends StatefulWidget {
 }
 
 class _MyplantsPageState extends State<MyplantsPage> {
-  late TextEditingController textController;
+  final TextEditingController searchController = TextEditingController();
+  List<MyPlant>? plants_list;
 
   @override
   void initState() {
     super.initState();
-    textController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -53,7 +59,11 @@ class _MyplantsPageState extends State<MyplantsPage> {
                   ),
                   Expanded(
                     child: TextFormField(
-                      controller: textController,
+                      controller: searchController,
+                      onEditingComplete: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        refresh();
+                      },
                       decoration: const InputDecoration(
                         isDense: true,
                         hintText: 'Rechercher ici...',
@@ -72,6 +82,23 @@ class _MyplantsPageState extends State<MyplantsPage> {
                       ),
                     ),
                   ),
+                  if (searchController.text.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsetsDirectional.only(end: 5),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.black,
+                        ),
+                        color: Colors.black,
+                        iconSize: 24,
+                        onPressed: () {
+                          setState(() {
+                            searchController.text = "";
+                          });
+                        },
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -79,7 +106,7 @@ class _MyplantsPageState extends State<MyplantsPage> {
         ),
         Expanded(
           child: FutureBuilder<List<MyPlant>>(
-            future: Services.myPlantsService.getPlants(),
+            future: loadPlantWithSearch(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final plants = (snapshot.data ?? [])
@@ -116,5 +143,27 @@ class _MyplantsPageState extends State<MyplantsPage> {
 
   refresh() {
     setState(() {});
+  }
+
+  Future<List<MyPlant>> loadPlantWithSearch() async {
+    plants_list ??= await Services.myPlantsService.getPlants();
+
+    if (plants_list!.isEmpty) {
+      return plants_list!;
+    } else {
+      final plantslist = <MyPlant>[];
+      for (final plant in plants_list!) {
+        if ((plant.name
+                    ?.toLowerCase()
+                    .contains(searchController.text.toLowerCase()) ??
+                false) ||
+            (plant.type.name
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase()))) {
+          plantslist.add(plant);
+        }
+      }
+      return plantslist;
+    }
   }
 }
