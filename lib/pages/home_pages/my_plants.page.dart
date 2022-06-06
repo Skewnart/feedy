@@ -60,8 +60,7 @@ class _MyplantsPageState extends State<MyplantsPage> {
                   Expanded(
                     child: TextFormField(
                       controller: searchController,
-                      onEditingComplete: () {
-                        FocusManager.instance.primaryFocus?.unfocus();
+                      onChanged: (t) {
                         refresh();
                       },
                       decoration: const InputDecoration(
@@ -142,6 +141,7 @@ class _MyplantsPageState extends State<MyplantsPage> {
   }
 
   refresh() {
+    plants_list = null;
     setState(() {});
   }
 
