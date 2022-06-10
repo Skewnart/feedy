@@ -73,6 +73,7 @@ class PlantTypesService {
       result['image_name'],
       result['interval_watering'],
       result['interval_misting'],
+      result['informations'],
     );
   }
 }

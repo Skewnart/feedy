@@ -23,18 +23,13 @@ class MyPlantsService {
   }
 
   MyPlant toPlant(Map<String, dynamic> result, List<PlantType> types) {
-    for (final type in types) {
-      if (type.id == result['plant_type_id']) {
-        return MyPlant(
-          result['id'],
-          result['name'],
-          type,
-          DateTime.parse(result['last_watering']),
-          DateTime.parse(result['last_misting']),
-        );
-      }
-    }
-    throw Exception("Type ${result['plant_type_id']} not found");
+    return MyPlant(
+      result['id'],
+      result['name'],
+      types.firstWhere((type) => type.id == result['plant_type_id']),
+      DateTime.parse(result['last_watering']),
+      DateTime.parse(result['last_misting']),
+    );
   }
 
   Future<PostgrestResponse<dynamic>> water(MyPlant plant) async {
@@ -47,5 +42,15 @@ class MyPlantsService {
     return (await _client.from(plantstable).update({
       'last_misting': DateFormat('yyyy-MM-dd').format(DateTime.now())
     }).match({'id': plant.id}).execute());
+  }
+
+  Future<PostgrestResponse<dynamic>> save(MyPlant plant) async {
+    return (await _client.from(plantstable).upsert({
+      if (plant.id > 0) 'id': plant.id,
+      'name': plant.name,
+      'plant_type_id': plant.type.id,
+      'last_watering': DateFormat('yyyy-MM-dd').format(plant.lastWatering),
+      'last_misting': DateFormat('yyyy-MM-dd').format(plant.lastMisting),
+    }).execute());
   }
 }

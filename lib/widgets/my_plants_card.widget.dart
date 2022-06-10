@@ -1,6 +1,7 @@
 import 'package:feedy/extensions/buildcontext.ext.dart';
 import 'package:feedy/models/my_plant.model.dart';
 import 'package:feedy/modules/authentication/auth_state.dart';
+import 'package:feedy/pages/my_plant_viewer.page.dart';
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
 
@@ -30,155 +31,166 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
         ? Colors.red
         : (mistingDays <= 2 ? Colors.orange : Colors.green);
 
-    return Card(
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      color: Color(0xFFFFFFFF),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          FutureBuilder<Image>(
-            future: Services.plantTypesService.getImageFromPlantType(
-              widget.plant.type,
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
-            ),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return snapshot.data!;
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-              return const SizedBox(
-                height: 100,
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, "/plant",
+            arguments: MyPlantViewerArguments(
+              myPlant: widget.plant,
+              directEditing: false,
+            )).then((val) {
+          widget.notifyParent();
+        });
+      },
+      child: Card(
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        color: Color(0xFFFFFFFF),
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            FutureBuilder<Image>(
+              future: Services.plantTypesService.getImageFromPlantType(
+                widget.plant.type,
                 width: 100,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            },
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(10, 5, 0, 5),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
-                    child: Text(
-                      widget.plant.type.name,
-                      style: Theme.of(context).textTheme.headline6,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!;
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+                return const SizedBox(
+                  height: 100,
+                  width: 100,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              },
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(10, 5, 0, 5),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
+                      child: Text(
+                        widget.plant.type.name,
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
                     ),
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        'Nom :',
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
-                        child: Text(
-                          widget.plant.name ?? "---",
-                          style: Theme.of(context).textTheme.bodyText1,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        'Arrosage :',
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
-                        child: Text(
-                          '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1
-                              ?.copyWith(color: wateringColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (widget.plant.type.intervalMisting > 0)
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Text(
-                          'Brumisation :',
+                          'Nom :',
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                           child: Text(
-                            '$mistingDays jour${mistingDays > 1 ? "s" : ""}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: mistingColor),
+                            widget.plant.name ?? "---",
+                            style: Theme.of(context).textTheme.bodyText1,
                           ),
                         ),
                       ],
                     ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                    child: Row(
+                    Row(
                       mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(
-                          height: 30,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                                foregroundColor: MaterialStateProperty.all(
-                              Colors.white,
-                            )),
-                            onPressed: () {
-                              _waterClick();
-                            },
-                            child: const Text("Arroser"),
+                        Text(
+                          'Arrosage :',
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                          child: Text(
+                            '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: wateringColor),
                           ),
                         ),
-                        if (widget.plant.type.intervalMisting > 0)
+                      ],
+                    ),
+                    if (widget.plant.type.intervalMisting > 0)
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text(
+                            'Brumisation :',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                            child: Text(
+                              '$mistingDays jour${mistingDays > 1 ? "s" : ""}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  ?.copyWith(color: mistingColor),
+                            ),
+                          ),
+                        ],
+                      ),
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
                           SizedBox(
                             height: 30,
                             child: ElevatedButton(
                               style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      Color.fromARGB(255, 217, 231, 180)),
                                   foregroundColor: MaterialStateProperty.all(
-                                    Colors.lightGreen,
-                                  )),
+                                Colors.white,
+                              )),
                               onPressed: () {
-                                _mistClick();
+                                _waterClick();
                               },
-                              child: const Text("Brumiser"),
+                              child: const Text("Arroser"),
                             ),
                           ),
-                      ],
+                          if (widget.plant.type.intervalMisting > 0)
+                            SizedBox(
+                              height: 30,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Color.fromARGB(255, 217, 231, 180)),
+                                    foregroundColor: MaterialStateProperty.all(
+                                      Colors.lightGreen,
+                                    )),
+                                onPressed: () {
+                                  _mistClick();
+                                },
+                                child: const Text("Brumiser"),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          const Icon(
-            Icons.keyboard_arrow_right_rounded,
-            color: Color(0xFF898989),
-            size: 24,
-          ),
-        ],
+            const Icon(
+              Icons.keyboard_arrow_right_rounded,
+              color: Color(0xFF898989),
+              size: 24,
+            ),
+          ],
+        ),
       ),
     );
   }
