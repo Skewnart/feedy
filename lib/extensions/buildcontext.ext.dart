@@ -24,23 +24,29 @@ extension ShowSnackBar on BuildContext {
     );
   }
 
-  void showAsking(
-      {required String title,
-      required String question,
-      required TextButton noButton,
-      required TextButton yesButton}) {
-    showDialog(
-      context: this,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(question),
-          actions: [
-            noButton,
-            yesButton,
-          ],
-        );
-      },
-    );
+  Future<bool> showYesNoQuestion(
+      {required String title, required String question}) async {
+    return await showDialog(
+        context: this,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(question),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop(false);
+                },
+                child: const Text("Non"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop(true);
+                },
+                child: const Text("Oui"),
+              ),
+            ],
+          );
+        });
   }
 }

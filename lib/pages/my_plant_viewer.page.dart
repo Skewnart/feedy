@@ -57,141 +57,175 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
         ? Colors.red
         : (mistingDays <= 2 ? Colors.orange : Colors.green);
 
-    return Scaffold(
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  FutureBuilder<Image>(
-                    future: Services.plantTypesService.getImageFromPlantType(
-                      myPlant!.type,
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      fit: BoxFit.cover,
+    return WillPopScope(
+      onWillPop: () async {
+        if (!isEditing!) {
+          return true;
+        } else {
+          return context
+              .showYesNoQuestion(
+                  title: "Modification en cours",
+                  question: "Voulez-vous sauvegarder ?")
+              .then((accepted) {
+            if (accepted) {
+              fillBackDatas();
+              return Services.myPlantsService.save(myPlant!).then((response) {
+                if (response.hasError) {
+                  context.showErrorSnackBar(
+                      message: "La sauvegarde a échouée.");
+                  return false;
+                } else {
+                  context.showSnackBar(
+                      message: "Informations sauvegardées avec succès !");
+                  return true;
+                }
+              });
+            } else {
+              return true;
+            }
+          });
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 40,
                     ),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return snapshot.data!;
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
-                      return const SizedBox(
-                        height: 150,
-                        width: 150,
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    },
-                  ),
-                  Text(
-                    myPlant!.type.name,
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                  if (!isEditing!)
+                    FutureBuilder<Image>(
+                      future: Services.plantTypesService.getImageFromPlantType(
+                        myPlant!.type,
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        fit: BoxFit.cover,
+                      ),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return snapshot.data!;
+                        } else if (snapshot.hasError) {
+                          return Text("${snapshot.error}");
+                        }
+                        return const SizedBox(
+                          height: 150,
+                          width: 150,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      },
+                    ),
                     Text(
-                      myPlant!.name ?? "",
-                      style: Theme.of(context).textTheme.titleLarge,
+                      myPlant!.type.name,
+                      style: Theme.of(context).textTheme.headline3,
                     ),
-                  if (isEditing!)
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: TextFormField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(
-                            labelText: 'Nom de la plante'),
+                    if (!isEditing!)
+                      Text(
+                        myPlant!.name ?? "",
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
+                    if (isEditing!)
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: TextFormField(
+                          controller: _nameController,
+                          decoration: const InputDecoration(
+                              labelText: 'Nom de la plante'),
+                        ),
+                      ),
+                    const SizedBox(
+                      height: 40,
                     ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Dernier arrosage : ',
-                        style: Theme.of(context).textTheme.bodyText2,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Dernier arrosage : ',
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                        Text(
+                          DateFormat('dd/MM/yyyy')
+                              .format(myPlant!.lastWatering),
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Prochain : ',
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                        Text(
+                          '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              ?.copyWith(color: wateringColor),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    if (myPlant!.type.intervalMisting > 0)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Dernierère brumisation : ',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                          Text(
+                            DateFormat('dd/MM/yyyy')
+                                .format(myPlant!.lastMisting),
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                        ],
                       ),
-                      Text(
-                        DateFormat('dd/MM/yyyy').format(myPlant!.lastWatering),
+                    if (myPlant!.type.intervalMisting > 0)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Prochaine : ',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                          Text(
+                            '$mistingDays jour${mistingDays > 1 ? "s" : ""}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: mistingColor),
+                          ),
+                        ],
+                      ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: Text(
+                        myPlant!.type.informations ?? "",
+                        textAlign: TextAlign.justify,
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Prochain : ',
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                      Text(
-                        '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            ?.copyWith(color: wateringColor),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Dernierère brumisation : ',
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                      Text(
-                        DateFormat('dd/MM/yyyy').format(myPlant!.lastMisting),
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Prochaine : ',
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                      Text(
-                        '$mistingDays jour${mistingDays > 1 ? "s" : ""}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            ?.copyWith(color: mistingColor),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.75,
-                    child: Text(
-                      myPlant!.type.informations ?? "",
-                      textAlign: TextAlign.justify,
-                      style: Theme.of(context).textTheme.bodyText1,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ),
+        floatingActionButton: generateFloatingButton(),
       ),
-      floatingActionButton: generateFloatingButton(),
     );
   }
 
@@ -200,6 +234,10 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
     isEditing = args.directEditing;
 
     _nameController.text = myPlant!.name ?? "";
+  }
+
+  void fillBackDatas() {
+    myPlant!.name = _nameController.text;
   }
 
   Widget generateFloatingButton() {
@@ -224,17 +262,17 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
         return FloatingActionButton(
           onPressed: () {
             setState(() {
-              isEditing = false;
               saveLoading = true;
-              myPlant!.name = _nameController.text;
+              fillBackDatas();
               Services.myPlantsService.save(myPlant!).then((response) {
                 if (response.hasError) {
                   context.showErrorSnackBar(
                       message: "La sauvegarde a échouée.");
                   print(response.error!.message);
                 } else {
+                  isEditing = false;
                   context.showSnackBar(
-                      message: "Plante actualisée avec succès !");
+                      message: "Informations sauvegardées avec succès !");
                 }
 
                 setState(() {

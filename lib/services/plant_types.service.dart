@@ -29,41 +29,46 @@ class PlantTypesService {
 
   //Charger l'image du bucket si elle n'a pas déjà été téléchargée
   Future<Image> getImageFromPlantType(PlantType type,
-      {double? width, double? height, BoxFit? fit}) async {
-    String filepath = await Services.storageService.getPath(type.imageName);
-
-    if (!(await File(filepath).exists())) {
-      final image =
-          await _client.storage.from("plants").download(type.imageName);
-      if (image.hasError) {
-        print(
-            "${type.imageName} non trouvé dans le bucket. Utilisation de l'image par défaut. ${image.error}");
-        return Image.asset(
-          "assets/images/lambdaImage.png",
-          width: width,
-          height: height,
-          fit: fit,
-        );
-      } else {
-        print("${type.imageName} téléchargée. Ecriture fichier.");
-        Services.storageService.writeFile(type.imageName, image.data!);
-        return Image.memory(
-          image.data!,
-          width: width,
-          height: height,
-          fit: fit,
-        );
-      }
-    } else {
-      print(
-          "${type.imageName} trouvé dans le stockage. Chargement du fichier.");
-      return Image.file(
-        File(filepath),
-        width: width,
-        height: height,
-        fit: fit,
-      );
-    }
+      {double? width, double? height, BoxFit? fit}) {
+    return Services.storageService.getPath(type.imageName).then((filepath) {
+      return File(filepath).exists().then((exists) {
+        if (!exists) {
+          return _client.storage
+              .from("plants")
+              .download(type.imageName)
+              .then((image) {
+            if (image.hasError) {
+              print(
+                  "${type.imageName} non trouvé dans le bucket. Utilisation de l'image par défaut. ${image.error}");
+              return Image.asset(
+                "assets/images/lambdaImage.png",
+                width: width,
+                height: height,
+                fit: fit,
+              );
+            } else {
+              print("${type.imageName} téléchargée. Ecriture fichier.");
+              Services.storageService.writeFile(type.imageName, image.data!);
+              return Image.memory(
+                image.data!,
+                width: width,
+                height: height,
+                fit: fit,
+              );
+            }
+          });
+        } else {
+          print(
+              "${type.imageName} trouvé dans le stockage. Chargement du fichier.");
+          return Image.file(
+            File(filepath),
+            width: width,
+            height: height,
+            fit: fit,
+          );
+        }
+      });
+    });
   }
 
   PlantType toPlantType(Map<String, dynamic> result) {

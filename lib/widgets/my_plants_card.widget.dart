@@ -195,21 +195,15 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
     );
   }
 
-  Future<void> _waterClick() async {
+  void _waterClick() {
     final name = widget.plant.name ?? widget.plant.type.name;
-    context.showAsking(
-      title: "Arrosage imminent",
-      question: "Voulez-vous arroser $name ?",
-      noButton: TextButton(
-        child: const Text("Non"),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      ),
-      yesButton: TextButton(
-        child: const Text("Oui"),
-        onPressed: () async {
-          final response = await Services.myPlantsService.water(widget.plant);
+
+    context
+        .showYesNoQuestion(
+            title: "Arrosage imminent", question: "Voulez-vous arroser $name ?")
+        .then((accepted) {
+      if (accepted) {
+        Services.myPlantsService.water(widget.plant).then((response) {
           if (!response.hasError) {
             widget.notifyParent();
             context.showSnackBar(message: "$name a été arrosée avec succès !");
@@ -218,38 +212,29 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                 message: "$name n'a pas pu être arrosée !");
             print(response.error);
           }
-          Navigator.of(context).pop();
-        },
-      ),
-    );
+        });
+      }
+    });
   }
 
-  Future<void> _mistClick() async {
+  void _mistClick() {
     final name = widget.plant.name ?? widget.plant.type.name;
-    context.showAsking(
-      title: "Brumisation imminente",
-      question: "Voulez-vous brumiser $name ?",
-      noButton: TextButton(
-        child: const Text("Non"),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      ),
-      yesButton: TextButton(
-        child: const Text("Oui"),
-        onPressed: () async {
-          final response = await Services.myPlantsService.mist(widget.plant);
-          if (!response.hasError) {
-            widget.notifyParent();
-            context.showSnackBar(message: "$name a été brumisée avec succès !");
-          } else {
-            context.showErrorSnackBar(
-                message: "$name n'a pas pu être brumisée !");
-            print(response.error);
-          }
-          Navigator.of(context).pop();
-        },
-      ),
-    );
+
+    context
+        .showYesNoQuestion(
+            title: "Brumisation imminente",
+            question: "Voulez-vous brumiser $name ?")
+        .then((accepted) {
+      Services.myPlantsService.mist(widget.plant).then((response) {
+        if (!response.hasError) {
+          widget.notifyParent();
+          context.showSnackBar(message: "$name a été brumisée avec succès !");
+        } else {
+          context.showErrorSnackBar(
+              message: "$name n'a pas pu être brumisée !");
+          print(response.error);
+        }
+      });
+    });
   }
 }
