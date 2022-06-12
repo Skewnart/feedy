@@ -1,9 +1,10 @@
 import 'package:feedy/extensions/buildcontext.ext.dart';
 import 'package:feedy/models/my_plant.model.dart';
+import 'package:feedy/models/plant_type.model.dart';
 import 'package:feedy/services/services.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class MyPlantViewerArguments {
   final MyPlant myPlant;
@@ -21,6 +22,9 @@ class MyPlantViewerPage extends StatefulWidget {
 
 class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
   final TextEditingController _nameController = TextEditingController();
+  late DateTime _datetime_watering;
+  late DateTime _datetime_misting;
+  late PlantType _planttype;
 
   MyPlant? myPlant;
   bool? isEditing;
@@ -102,7 +106,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                     ),
                     FutureBuilder<Image>(
                       future: Services.plantTypesService.getImageFromPlantType(
-                        myPlant!.type,
+                        isEditing! ? _planttype : myPlant!.type,
                         width: MediaQuery.of(context).size.width * 0.5,
                         fit: BoxFit.cover,
                       ),
@@ -121,10 +125,42 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                         );
                       },
                     ),
-                    Text(
-                      myPlant!.type.name,
-                      style: Theme.of(context).textTheme.headline3,
-                    ),
+                    if (!isEditing!)
+                      Text(
+                        myPlant!.type.name,
+                        style: Theme.of(context).textTheme.headline3,
+                      ),
+                    if (isEditing!)
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: FutureBuilder<List<PlantType>>(
+                          future: Services.plantTypesService.getPlantTypes(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return DropdownButton<PlantType>(
+                                value: _planttype,
+                                elevation: 16,
+                                icon: const Icon(Icons.arrow_drop_down),
+                                onChanged: (PlantType? newValue) {
+                                  setState(() {
+                                    _planttype = newValue!;
+                                  });
+                                },
+                                items: snapshot.data!
+                                    .map<DropdownMenuItem<PlantType>>(
+                                        (PlantType type) {
+                                  return DropdownMenuItem<PlantType>(
+                                    value: type,
+                                    child: Text(type.name),
+                                  );
+                                }).toList(),
+                              );
+                            } else {
+                              return const Text("Chargement...");
+                            }
+                          },
+                        ),
+                      ),
                     if (!isEditing!)
                       Text(
                         myPlant!.name ?? "",
@@ -149,33 +185,63 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                           'Dernier arrosage : ',
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
-                        Text(
-                          DateFormat('dd/MM/yyyy')
-                              .format(myPlant!.lastWatering),
-                          style: Theme.of(context).textTheme.bodyText1,
-                        ),
+                        if (!isEditing!)
+                          Text(
+                            DateFormat('dd/MM/yyyy')
+                                .format(myPlant!.lastWatering),
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                        if (isEditing!)
+                          GestureDetector(
+                            onTap: () {
+                              DatePicker.showDatePicker(context,
+                                  showTitleActions: true,
+                                  minTime: DateTime.now()
+                                      .subtract(const Duration(days: 90)),
+                                  maxTime: DateTime.now()
+                                      .add(const Duration(days: 90)),
+                                  theme: DatePickerTheme(), onConfirm: (date) {
+                                setState(() {
+                                  _datetime_watering = date;
+                                });
+                              },
+                                  currentTime: DateTime.now(),
+                                  locale: LocaleType.fr);
+                            },
+                            child: Row(children: [
+                              Text(
+                                DateFormat('dd/MM/yyyy')
+                                    .format(_datetime_watering),
+                                style: Theme.of(context).textTheme.bodyText1,
+                              ),
+                              const Icon(Icons.arrow_drop_down),
+                            ]),
+                          ),
                       ],
                     ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Prochain : ',
-                          style: Theme.of(context).textTheme.bodyText2,
-                        ),
-                        Text(
-                          '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1
-                              ?.copyWith(color: wateringColor),
-                        ),
-                      ],
-                    ),
+                    if (!isEditing!)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Prochain : ',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                          Text(
+                            '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(color: wateringColor),
+                          ),
+                        ],
+                      ),
                     const SizedBox(
                       height: 40,
                     ),
-                    if (myPlant!.type.intervalMisting > 0)
+                    if ((isEditing! ? _planttype : myPlant!.type)
+                            .intervalMisting >
+                        0)
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -183,14 +249,42 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                             'Dernierère brumisation : ',
                             style: Theme.of(context).textTheme.bodyText2,
                           ),
-                          Text(
-                            DateFormat('dd/MM/yyyy')
-                                .format(myPlant!.lastMisting),
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
+                          if (!isEditing!)
+                            Text(
+                              DateFormat('dd/MM/yyyy')
+                                  .format(myPlant!.lastMisting),
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                          if (isEditing!)
+                            GestureDetector(
+                              onTap: () {
+                                DatePicker.showDatePicker(context,
+                                    showTitleActions: true,
+                                    minTime: DateTime.now()
+                                        .subtract(const Duration(days: 90)),
+                                    maxTime: DateTime.now()
+                                        .add(const Duration(days: 90)),
+                                    theme: DatePickerTheme(),
+                                    onConfirm: (date) {
+                                  setState(() {
+                                    _datetime_misting = date;
+                                  });
+                                },
+                                    currentTime: DateTime.now(),
+                                    locale: LocaleType.fr);
+                              },
+                              child: Row(children: [
+                                Text(
+                                  DateFormat('dd/MM/yyyy')
+                                      .format(_datetime_misting),
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                                const Icon(Icons.arrow_drop_down),
+                              ]),
+                            ),
                         ],
                       ),
-                    if (myPlant!.type.intervalMisting > 0)
+                    if (!isEditing! && myPlant!.type.intervalMisting > 0)
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -213,7 +307,9 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.75,
                       child: Text(
-                        myPlant!.type.informations ?? "",
+                        (isEditing! ? _planttype : myPlant!.type)
+                                .informations ??
+                            "",
                         textAlign: TextAlign.justify,
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
@@ -234,10 +330,17 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
     isEditing = args.directEditing;
 
     _nameController.text = myPlant!.name ?? "";
+    _planttype = myPlant!.type;
+    _datetime_watering = myPlant!.lastWatering;
+    _datetime_misting = myPlant!.lastMisting;
   }
 
   void fillBackDatas() {
     myPlant!.name = _nameController.text;
+    myPlant!.type = _planttype;
+    myPlant!.lastWatering = _datetime_watering;
+    myPlant!.lastMisting = _datetime_misting;
+    myPlant!.resetRemainings();
   }
 
   Widget generateFloatingButton() {
