@@ -113,7 +113,9 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                           child: Text(
-                            '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
+                            wateringDays == 0
+                                ? "Maintenant"
+                                : '$wateringDays jours',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
@@ -133,7 +135,9 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                           Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                             child: Text(
-                              '$mistingDays jour${mistingDays > 1 ? "s" : ""}',
+                              mistingDays == 0
+                                  ? "Maintenant"
+                                  : '$mistingDays jours',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText1
