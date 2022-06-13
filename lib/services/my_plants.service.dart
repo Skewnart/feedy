@@ -53,4 +53,11 @@ class MyPlantsService {
       'last_misting': DateFormat('yyyy-MM-dd').format(plant.lastMisting),
     }).execute());
   }
+
+  Future<PostgrestResponse<dynamic>> delete(MyPlant plant) {
+    return _client
+        .from(plantstable)
+        .delete(returning: ReturningOption.representation)
+        .match({'id': plant.id}).execute();
+  }
 }

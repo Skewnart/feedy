@@ -3,6 +3,7 @@ import 'package:feedy/models/my_plant.model.dart';
 import 'package:feedy/models/plant_type.model.dart';
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
@@ -352,14 +353,58 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
       );
     } else {
       if (!isEditing!) {
-        return FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              isEditing = true;
-            });
-          },
-          tooltip: 'Editer la plante',
-          child: const Icon(Icons.edit),
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (myPlant!.id > 0)
+              FloatingActionButton(
+                onPressed: () {
+                  context
+                      .showYesNoQuestion(
+                          title: "Confirmation",
+                          question: "Voulez-vous supprimer la plante ?")
+                      .then((acc) {
+                    if (acc) {
+                      context
+                          .showYesNoQuestion(
+                              title: "Confirmation", question: "Vraiment ?")
+                          .then((accepted) async {
+                        if (accepted) {
+                          final response =
+                              await Services.myPlantsService.delete(myPlant!);
+                          if (response.hasError ||
+                              (response.data as List<dynamic>).isEmpty) {
+                            context.showErrorSnackBar(
+                                message: "La suppression n'a pas fonctionné !");
+                          } else {
+                            context.showSnackBar(
+                                message:
+                                    "La suppression a fonctionné avec succès !");
+                            Navigator.of(context).pop();
+                          }
+                        }
+                      });
+                    }
+                  });
+                },
+                tooltip: 'Supprimer la plante',
+                backgroundColor: Color.fromARGB(255, 207, 45, 34),
+                child: const Icon(Icons.delete),
+              ),
+            Padding(
+                padding: const EdgeInsetsDirectional.only(
+                  start: 20,
+                ),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+                      isEditing = true;
+                    });
+                  },
+                  tooltip: 'Editer la plante',
+                  child: const Icon(Icons.edit),
+                )),
+          ],
         );
       } else {
         return FloatingActionButton(
