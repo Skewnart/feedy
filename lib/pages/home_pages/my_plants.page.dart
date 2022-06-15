@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:feedy/models/my_plant.model.dart';
 import 'package:feedy/widgets/my_plants_card.widget.dart';
 import 'package:feedy/services/services.dart';
+import 'package:feedy/widgets/search.widget.dart';
 import 'package:flutter/material.dart';
 
 class MyplantsPage extends StatefulWidget {
@@ -40,69 +41,11 @@ class _MyplantsPageState extends State<MyplantsPage> {
             style: Theme.of(context).textTheme.headline3,
           ),
         ),
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 20),
-          child: Card(
-            elevation: 3,
-            child: Container(
-              height: 50,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  const Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-                    child: Icon(
-                      Icons.search,
-                      color: Colors.black,
-                      size: 24,
-                    ),
-                  ),
-                  Expanded(
-                    child: TextFormField(
-                      controller: searchController,
-                      onChanged: (t) {
-                        setState(() {});
-                      },
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        hintText: 'Rechercher ici...',
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 1,
-                          ),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x00000000),
-                            width: 1,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (searchController.text.isNotEmpty)
-                    Padding(
-                      padding: EdgeInsetsDirectional.only(end: 5),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.close,
-                          color: Colors.black,
-                        ),
-                        color: Colors.black,
-                        iconSize: 24,
-                        onPressed: () {
-                          setState(() {
-                            searchController.text = "";
-                          });
-                        },
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        SearchWidget(
+            searchController: searchController,
+            notifyParent: () {
+              setState(() {});
+            }),
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
