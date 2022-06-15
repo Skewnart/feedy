@@ -104,36 +104,41 @@ class _MyplantsPageState extends State<MyplantsPage> {
           ),
         ),
         Expanded(
-          child: FutureBuilder<List<MyPlant>>(
-            future: loadPlantWithSearch(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final plants = (snapshot.data ?? [])
-                  ..sort((x, y) => (x.type.intervalMisting > 0
-                          ? min(x.remainWatering, x.remainMisting)
-                          : x.remainWatering)
-                      .compareTo(y.type.intervalMisting > 0
-                          ? min(y.remainWatering, y.remainMisting)
-                          : y.remainWatering));
-                return ListView.builder(
-                  itemBuilder: (BuildContext, index) {
-                    return MyPlantCard(
-                      plant: plants[index],
-                      notifyParent: refresh,
-                    );
-                  },
-                  itemCount: plants.length,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  scrollDirection: Axis.vertical,
-                );
-              } else if (snapshot.hasError) {
-                return Text(
-                    "Erreur dans le chargement des données : ${snapshot.error}");
-              }
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+          child: RefreshIndicator(
+            onRefresh: () async {
+              refresh();
             },
+            child: FutureBuilder<List<MyPlant>>(
+              future: loadPlantWithSearch(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final plants = (snapshot.data ?? [])
+                    ..sort((x, y) => (x.type.intervalMisting > 0
+                            ? min(x.remainWatering, x.remainMisting)
+                            : x.remainWatering)
+                        .compareTo(y.type.intervalMisting > 0
+                            ? min(y.remainWatering, y.remainMisting)
+                            : y.remainWatering));
+                  return ListView.builder(
+                    itemBuilder: (BuildContext, index) {
+                      return MyPlantCard(
+                        plant: plants[index],
+                        notifyParent: refresh,
+                      );
+                    },
+                    itemCount: plants.length,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    scrollDirection: Axis.vertical,
+                  );
+                } else if (snapshot.hasError) {
+                  return Text(
+                      "Erreur dans le chargement des données : ${snapshot.error}");
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
           ),
         ),
       ],

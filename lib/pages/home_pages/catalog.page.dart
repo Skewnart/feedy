@@ -109,37 +109,43 @@ class _CatalogPageState extends State<CatalogPage> {
           ),
         ),
         Expanded(
-          child: FutureBuilder<List<PlantType>>(
-            future: loadPlantTypeWithSearch(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final types = (snapshot.data ?? [])
-                  ..sort((x, y) => x.name.compareTo(y.name));
-                return Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
-                  child: GridView.builder(
-                    itemCount: snapshot.data!.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 5,
-                      mainAxisSpacing: 5,
-                    ),
-                    itemBuilder: (context, index) {
-                      return CatalogCard(
-                        plant_type: snapshot.data![index],
-                      );
-                    },
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return Text(
-                    "Erreur dans le chargement des données : ${snapshot.error}");
-              }
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+          child: RefreshIndicator(
+            onRefresh: () async {
+              refresh();
             },
+            child: FutureBuilder<List<PlantType>>(
+              future: loadPlantTypeWithSearch(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final types = (snapshot.data ?? [])
+                    ..sort((x, y) => x.name.compareTo(y.name));
+                  return Padding(
+                    padding:
+                        const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
+                    child: GridView.builder(
+                      itemCount: types.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 5,
+                      ),
+                      itemBuilder: (context, index) {
+                        return CatalogCard(
+                          plant_type: types[index],
+                        );
+                      },
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text(
+                      "Erreur dans le chargement des données : ${snapshot.error}");
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
           ),
         ),
       ],
