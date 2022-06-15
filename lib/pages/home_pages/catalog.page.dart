@@ -153,7 +153,8 @@ class _CatalogPageState extends State<CatalogPage> {
   }
 
   Future<List<PlantType>> loadPlantTypeWithSearch() async {
-    planttype_list ??= await Services.plantTypesService.getPlantTypes();
+    planttype_list = await Services.plantTypesService
+        .getPlantTypes(reset: planttype_list == null);
 
     if (planttype_list!.isEmpty) {
       return planttype_list!;

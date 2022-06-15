@@ -13,8 +13,8 @@ class PlantTypesService {
 
   PlantTypesService(this._client);
 
-  Future<List<PlantType>> getPlantTypes() async {
-    if (types == null) {
+  Future<List<PlantType>> getPlantTypes({bool reset = false}) async {
+    if (types == null || reset) {
       final response = await _client.from(plant_types_table).select().execute();
       if (response.error == null) {
         final results = response.data as List<dynamic>;
