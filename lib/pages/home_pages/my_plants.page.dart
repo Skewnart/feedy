@@ -61,7 +61,7 @@ class _MyplantsPageState extends State<MyplantsPage> {
                     child: TextFormField(
                       controller: searchController,
                       onChanged: (t) {
-                        refresh();
+                        setState(() {});
                       },
                       decoration: const InputDecoration(
                         isDense: true,

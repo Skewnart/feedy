@@ -11,12 +11,24 @@ class CatalogPage extends StatefulWidget {
 }
 
 class _CatalogPageState extends State<CatalogPage> {
-  late TextEditingController textController;
+  late TextEditingController searchController;
+  List<PlantType>? planttype_list;
 
   @override
   void initState() {
     super.initState();
-    textController = TextEditingController();
+    searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  refresh() {
+    planttype_list = null;
+    setState(() {});
   }
 
   @override
@@ -52,7 +64,10 @@ class _CatalogPageState extends State<CatalogPage> {
                   ),
                   Expanded(
                     child: TextFormField(
-                      controller: textController,
+                      controller: searchController,
+                      onChanged: (t) {
+                        setState(() {});
+                      },
                       decoration: const InputDecoration(
                         isDense: true,
                         hintText: 'Rechercher ici...',
@@ -71,6 +86,23 @@ class _CatalogPageState extends State<CatalogPage> {
                       ),
                     ),
                   ),
+                  if (searchController.text.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsetsDirectional.only(end: 5),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.black,
+                        ),
+                        color: Colors.black,
+                        iconSize: 24,
+                        onPressed: () {
+                          setState(() {
+                            searchController.text = "";
+                          });
+                        },
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -78,9 +110,11 @@ class _CatalogPageState extends State<CatalogPage> {
         ),
         Expanded(
           child: FutureBuilder<List<PlantType>>(
-            future: Services.plantTypesService.getPlantTypes(),
+            future: loadPlantTypeWithSearch(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+                final types = (snapshot.data ?? [])
+                  ..sort((x, y) => x.name.compareTo(y.name));
                 return Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 10),
                   child: GridView.builder(
@@ -110,5 +144,23 @@ class _CatalogPageState extends State<CatalogPage> {
         ),
       ],
     );
+  }
+
+  Future<List<PlantType>> loadPlantTypeWithSearch() async {
+    planttype_list ??= await Services.plantTypesService.getPlantTypes();
+
+    if (planttype_list!.isEmpty) {
+      return planttype_list!;
+    } else {
+      final typeslist = <PlantType>[];
+      for (final type in planttype_list!) {
+        if (type.name
+            .toLowerCase()
+            .contains(searchController.text.toLowerCase())) {
+          typeslist.add(type);
+        }
+      }
+      return typeslist;
+    }
   }
 }
