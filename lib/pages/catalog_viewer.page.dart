@@ -159,7 +159,11 @@ class _CatalogViewerPageState extends State<CatalogViewerPage> {
                   myPlant: MyPlant(
                       0, null, plantType!, DateTime.now(), DateTime.now()),
                   directEditing: true,
-                ));
+                )).then((ret) {
+              if (ret != null) {
+                Navigator.of(context).pop();
+              }
+            });
           }
         });
       },

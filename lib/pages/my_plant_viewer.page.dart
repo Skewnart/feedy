@@ -421,6 +421,10 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                       message: "La sauvegarde a échouée.");
                   print(response.error!.message);
                 } else {
+                  if (myPlant!.id == 0) {
+                    myPlant!.id = response.data[0]['id'];
+                    Navigator.of(context).pop(myPlant!);
+                  }
                   isEditing = false;
                   context.showSnackBar(
                       message: "Informations sauvegardées avec succès !");
