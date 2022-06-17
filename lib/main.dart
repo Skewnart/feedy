@@ -1,3 +1,4 @@
+import 'package:feedy/pages/catalog_viewer.page.dart';
 import 'package:feedy/pages/my_plant_viewer.page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/account': (_) => const AccountPage(),
         '/home': (_) => const MyHomePage(),
         '/plant': (_) => const MyPlantViewerPage(),
+        '/catalog': (_) => const CatalogViewerPage(),
       },
     );
   }

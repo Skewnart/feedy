@@ -1,4 +1,5 @@
 import 'package:feedy/models/plant_type.model.dart';
+import 'package:feedy/pages/catalog_viewer.page.dart';
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
 
@@ -9,41 +10,49 @@ class CatalogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: FutureBuilder<Image>(
-              future: Services.plantTypesService.getImageFromPlantType(
-                plant_type,
-                width: null,
-                height: null,
-                fit: BoxFit.contain,
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, "/catalog",
+            arguments: CatalogViewerArguments(
+              plantType: plant_type,
+            ));
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return snapshot.data!;
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
+              child: FutureBuilder<Image>(
+                future: Services.plantTypesService.getImageFromPlantType(
+                  plant_type,
+                  width: null,
+                  height: null,
+                  fit: BoxFit.contain,
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return snapshot.data!;
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
             ),
           ),
-        ),
-        Text(
-          plant_type.name,
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-      ],
+          Text(
+            plant_type.name,
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        ],
+      ),
     );
   }
 }
