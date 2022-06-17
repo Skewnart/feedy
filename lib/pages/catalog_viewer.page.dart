@@ -1,6 +1,7 @@
 import 'package:feedy/extensions/buildcontext.ext.dart';
 import 'package:feedy/models/my_plant.model.dart';
 import 'package:feedy/models/plant_type.model.dart';
+import 'package:feedy/pages/my_plant_viewer.page.dart';
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -153,7 +154,12 @@ class _CatalogViewerPageState extends State<CatalogViewerPage> {
                 question: "Voulez-vous ajouter cette plante à votre liste ?")
             .then((acc) {
           if (acc) {
-            print("ok on ajoute");
+            Navigator.pushNamed(context, "/plant",
+                arguments: MyPlantViewerArguments(
+                  myPlant: MyPlant(
+                      0, null, plantType!, DateTime.now(), DateTime.now()),
+                  directEditing: true,
+                ));
           }
         });
       },
