@@ -15,7 +15,7 @@ class Services {
     final client = Supabase.instance.client;
     myPlantsService = MyPlantsService(client);
     plantTypesService = PlantTypesService(client);
-    storageService = StorageService();
+    storageService = StorageService(client);
     authService = client.auth;
     packageService = PackageService();
   }
