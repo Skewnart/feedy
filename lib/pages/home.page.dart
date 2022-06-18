@@ -13,6 +13,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends AuthRequiredState<MyHomePage> {
   int _selectedIndex = 1;
+  final PageController _pageController = PageController(initialPage: 1);
 
   static const List<PageOption> _widgetOptions = <PageOption>[
     PageOption(
@@ -36,6 +37,7 @@ class _MyHomePageState extends AuthRequiredState<MyHomePage> {
     setState(() {
       _selectedIndex = index;
     });
+    _pageController.jumpToPage(index);
   }
 
   @override
@@ -44,10 +46,21 @@ class _MyHomePageState extends AuthRequiredState<MyHomePage> {
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
-          child: _widgetOptions.elementAt(_selectedIndex).child,
+          child: PageView(
+            onPageChanged: (page) {
+              setState(() {
+                _selectedIndex = page;
+              });
+            },
+            controller: _pageController,
+            children: _widgetOptions.map((e) => e.child).toList(),
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.green[800],
+        onTap: _onItemTapped,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: _widgetOptions[0].icon,
@@ -62,9 +75,6 @@ class _MyHomePageState extends AuthRequiredState<MyHomePage> {
             label: _widgetOptions[2].title,
           ),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green[800],
-        onTap: _onItemTapped,
       ),
     );
   }
