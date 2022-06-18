@@ -115,7 +115,7 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                           child: Text(
                             wateringDays == 0
                                 ? "Maintenant"
-                                : '$wateringDays jours',
+                                : '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
@@ -137,7 +137,7 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                             child: Text(
                               mistingDays == 0
                                   ? "Maintenant"
-                                  : '$mistingDays jours',
+                                  : '$mistingDays jour${mistingDays > 1 ? "s" : ""}',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText1

@@ -230,7 +230,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                           Text(
                             wateringDays == 0
                                 ? "Maintenant"
-                                : '$wateringDays jours',
+                                : '$wateringDays ${wateringDays > 1 ? "s" : ""}',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
@@ -297,7 +297,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                           Text(
                             mistingDays == 0
                                 ? "Maintenant"
-                                : '$mistingDays jours',
+                                : '$mistingDays ${mistingDays > 1 ? "s" : ""}',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
