@@ -1,3 +1,4 @@
+import 'package:feedy/models/plant_type.model.dart';
 import 'package:flutter/material.dart';
 import 'package:feedy/services/services.dart';
 import 'package:feedy/extensions/buildcontext.ext.dart';
@@ -29,7 +30,69 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: <Widget>[
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 40,
+              ),
+              FutureBuilder<Image>(
+                future: Services.storageService.getImageFromPngName(
+                  "icon",
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  fit: BoxFit.cover,
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return snapshot.data!;
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  return const SizedBox(
+                    height: 150,
+                    width: 150,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "v ",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  FutureBuilder(
+                      future: Services.packageService.getVersion(),
+                      builder: ((context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Text(
+                            snapshot.data! as String,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          );
+                        } else {
+                          return Text(
+                            "...",
+                            style: Theme.of(context).textTheme.bodyText1,
+                          );
+                        }
+                      }))
+                ],
+              ),
+            ],
+          ),
+        ),
         Expanded(
           child: Center(
             child: Text(
