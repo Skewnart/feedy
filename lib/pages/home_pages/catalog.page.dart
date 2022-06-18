@@ -13,7 +13,7 @@ class CatalogPage extends StatefulWidget {
 
 class _CatalogPageState extends State<CatalogPage> {
   late TextEditingController searchController;
-  List<PlantType>? planttype_list;
+  List<PlantType>? planttypeList;
 
   @override
   void initState() {
@@ -28,7 +28,7 @@ class _CatalogPageState extends State<CatalogPage> {
   }
 
   refresh() {
-    planttype_list = null;
+    planttypeList = null;
     setState(() {});
   }
 
@@ -75,7 +75,7 @@ class _CatalogPageState extends State<CatalogPage> {
                       ),
                       itemBuilder: (context, index) {
                         return CatalogCard(
-                          plant_type: types[index],
+                          plantType: types[index],
                         );
                       },
                     ),
@@ -96,14 +96,14 @@ class _CatalogPageState extends State<CatalogPage> {
   }
 
   Future<List<PlantType>> loadPlantTypeWithSearch() async {
-    planttype_list = await Services.plantTypesService
-        .getPlantTypes(reset: planttype_list == null);
+    planttypeList = await Services.plantTypesService
+        .getPlantTypes(reset: planttypeList == null);
 
-    if (planttype_list!.isEmpty) {
-      return planttype_list!;
+    if (planttypeList!.isEmpty) {
+      return planttypeList!;
     } else {
       final typeslist = <PlantType>[];
-      for (final type in planttype_list!) {
+      for (final type in planttypeList!) {
         if (type.name
             .toLowerCase()
             .contains(searchController.text.toLowerCase())) {

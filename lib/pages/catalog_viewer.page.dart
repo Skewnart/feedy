@@ -4,8 +4,6 @@ import 'package:feedy/models/plant_type.model.dart';
 import 'package:feedy/pages/my_plant_viewer.page.dart';
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class CatalogViewerArguments {
   final PlantType plantType;
@@ -123,7 +121,7 @@ class _CatalogViewerPageState extends State<CatalogViewerPage> {
                   const SizedBox(
                     height: 40,
                   ),
-                  Container(
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.75,
                     child: Text(
                       plantType!.informations ?? "",

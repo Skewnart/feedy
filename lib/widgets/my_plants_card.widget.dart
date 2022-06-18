@@ -78,13 +78,13 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(10, 5, 0, 5),
+                padding: const EdgeInsetsDirectional.fromSTEB(10, 5, 0, 5),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
+                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
                       child: Text(
                         widget.plant.type.name,
                         style: Theme.of(context).textTheme.headline6,
@@ -98,7 +98,7 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                           child: Text(
                             widget.plant.name ?? "---",
                             style: Theme.of(context).textTheme.bodyText1,
@@ -114,7 +114,7 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                          padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                           child: Text(
                             wateringDays == 0
                                 ? "Maintenant"
@@ -136,7 +136,7 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                             style: Theme.of(context).textTheme.bodyText2,
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                             child: Text(
                               mistingDays == 0
                                   ? "Maintenant"
@@ -150,7 +150,7 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                         ],
                       ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -1,4 +1,3 @@
-import 'package:feedy/models/plant_type.model.dart';
 import 'package:flutter/material.dart';
 import 'package:feedy/services/services.dart';
 import 'package:feedy/extensions/buildcontext.ext.dart';
@@ -11,13 +10,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   Future<void> _signOut() async {
     final response = await Services.authService.signOut();

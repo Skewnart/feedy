@@ -22,9 +22,9 @@ class MyPlantViewerPage extends StatefulWidget {
 
 class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
   final TextEditingController _nameController = TextEditingController();
-  late DateTime _datetime_watering;
-  late DateTime _datetime_misting;
-  late PlantType _planttype;
+  late DateTime _datetimeWatering;
+  late DateTime _datetimeMisting;
+  late PlantType _plantType;
 
   MyPlant? myPlant;
   bool? isEditing;
@@ -110,7 +110,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                     ),
                     FutureBuilder<Image>(
                       future: Services.plantTypesService.getImageFromPlantType(
-                        isEditing! ? _planttype : myPlant!.type,
+                        isEditing! ? _plantType : myPlant!.type,
                         width: MediaQuery.of(context).size.width * 0.5,
                         fit: BoxFit.cover,
                       ),
@@ -142,12 +142,12 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return DropdownButton<PlantType>(
-                                value: _planttype,
+                                value: _plantType,
                                 elevation: 16,
                                 icon: const Icon(Icons.arrow_drop_down),
                                 onChanged: (PlantType? newValue) {
                                   setState(() {
-                                    _planttype = newValue!;
+                                    _plantType = newValue!;
                                   });
                                 },
                                 items: snapshot.data!
@@ -204,9 +204,10 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                                       .subtract(const Duration(days: 90)),
                                   maxTime: DateTime.now()
                                       .add(const Duration(days: 90)),
-                                  theme: DatePickerTheme(), onConfirm: (date) {
+                                  theme: const DatePickerTheme(),
+                                  onConfirm: (date) {
                                 setState(() {
-                                  _datetime_watering = date;
+                                  _datetimeWatering = date;
                                 });
                               },
                                   currentTime: DateTime.now(),
@@ -215,7 +216,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                             child: Row(children: [
                               Text(
                                 DateFormat('dd/MM/yyyy')
-                                    .format(_datetime_watering),
+                                    .format(_datetimeWatering),
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                               const Icon(Icons.arrow_drop_down),
@@ -234,7 +235,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                           Text(
                             wateringDays == 0
                                 ? "Maintenant"
-                                : '$wateringDays ${wateringDays > 1 ? "s" : ""}',
+                                : '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
@@ -245,7 +246,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                     const SizedBox(
                       height: 40,
                     ),
-                    if ((isEditing! ? _planttype : myPlant!.type)
+                    if ((isEditing! ? _plantType : myPlant!.type)
                             .intervalMisting >
                         0)
                       Row(
@@ -270,10 +271,10 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                                         .subtract(const Duration(days: 90)),
                                     maxTime: DateTime.now()
                                         .add(const Duration(days: 90)),
-                                    theme: DatePickerTheme(),
+                                    theme: const DatePickerTheme(),
                                     onConfirm: (date) {
                                   setState(() {
-                                    _datetime_misting = date;
+                                    _datetimeMisting = date;
                                   });
                                 },
                                     currentTime: DateTime.now(),
@@ -282,7 +283,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                               child: Row(children: [
                                 Text(
                                   DateFormat('dd/MM/yyyy')
-                                      .format(_datetime_misting),
+                                      .format(_datetimeMisting),
                                   style: Theme.of(context).textTheme.bodyText1,
                                 ),
                                 const Icon(Icons.arrow_drop_down),
@@ -301,7 +302,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                           Text(
                             mistingDays == 0
                                 ? "Maintenant"
-                                : '$mistingDays ${mistingDays > 1 ? "s" : ""}',
+                                : '$mistingDays jour${mistingDays > 1 ? "s" : ""}',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1
@@ -312,10 +313,10 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                     const SizedBox(
                       height: 40,
                     ),
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width * 0.75,
                       child: Text(
-                        (isEditing! ? _planttype : myPlant!.type)
+                        (isEditing! ? _plantType : myPlant!.type)
                                 .informations ??
                             "",
                         textAlign: TextAlign.justify,
@@ -338,16 +339,16 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
     isEditing = args.directEditing;
 
     _nameController.text = myPlant!.name ?? "";
-    _planttype = myPlant!.type;
-    _datetime_watering = myPlant!.lastWatering;
-    _datetime_misting = myPlant!.lastMisting;
+    _plantType = myPlant!.type;
+    _datetimeWatering = myPlant!.lastWatering;
+    _datetimeMisting = myPlant!.lastMisting;
   }
 
   void fillBackDatas() {
     myPlant!.name = _nameController.text;
-    myPlant!.type = _planttype;
-    myPlant!.lastWatering = _datetime_watering;
-    myPlant!.lastMisting = _datetime_misting;
+    myPlant!.type = _plantType;
+    myPlant!.lastWatering = _datetimeWatering;
+    myPlant!.lastMisting = _datetimeMisting;
     myPlant!.resetRemainings();
   }
 
@@ -395,7 +396,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                   });
                 },
                 tooltip: 'Supprimer la plante',
-                backgroundColor: Color.fromARGB(255, 207, 45, 34),
+                backgroundColor: Colors.red,
                 child: const Icon(
                   Icons.delete,
                   color: Color(0xFFFFFFFF),
@@ -438,7 +439,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                 }
 
                 setState(() {
-                  this.saveLoading = false;
+                  saveLoading = false;
                 });
               });
             });

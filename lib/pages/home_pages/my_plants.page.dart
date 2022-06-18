@@ -14,7 +14,7 @@ class MyplantsPage extends StatefulWidget {
 
 class _MyplantsPageState extends State<MyplantsPage> {
   final TextEditingController searchController = TextEditingController();
-  List<MyPlant>? plants_list;
+  List<MyPlant>? plantsList;
 
   @override
   void initState() {
@@ -63,7 +63,7 @@ class _MyplantsPageState extends State<MyplantsPage> {
                             ? min(y.remainWatering, y.remainMisting)
                             : y.remainWatering));
                   return ListView.builder(
-                    itemBuilder: (BuildContext, index) {
+                    itemBuilder: (buildContext, index) {
                       return MyPlantCard(
                         plant: plants[index],
                         notifyParent: refresh,
@@ -89,18 +89,18 @@ class _MyplantsPageState extends State<MyplantsPage> {
   }
 
   refresh() {
-    plants_list = null;
+    plantsList = null;
     setState(() {});
   }
 
   Future<List<MyPlant>> loadPlantWithSearch() async {
-    plants_list ??= await Services.myPlantsService.getPlants();
+    plantsList ??= await Services.myPlantsService.getPlants();
 
-    if (plants_list!.isEmpty) {
-      return plants_list!;
+    if (plantsList!.isEmpty) {
+      return plantsList!;
     } else {
-      final plantslist = <MyPlant>[];
-      for (final plant in plants_list!) {
+      final plants = <MyPlant>[];
+      for (final plant in plantsList!) {
         if ((plant.name
                     ?.toLowerCase()
                     .contains(searchController.text.toLowerCase()) ??
@@ -108,10 +108,10 @@ class _MyplantsPageState extends State<MyplantsPage> {
             (plant.type.name
                 .toLowerCase()
                 .contains(searchController.text.toLowerCase()))) {
-          plantslist.add(plant);
+          plants.add(plant);
         }
       }
-      return plantslist;
+      return plants;
     }
   }
 }

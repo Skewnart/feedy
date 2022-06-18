@@ -4,9 +4,9 @@ import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
 
 class CatalogCard extends StatelessWidget {
-  const CatalogCard({Key? key, required this.plant_type}) : super(key: key);
+  const CatalogCard({Key? key, required this.plantType}) : super(key: key);
 
-  final PlantType plant_type;
+  final PlantType plantType;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class CatalogCard extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(context, "/catalog",
             arguments: CatalogViewerArguments(
-              plantType: plant_type,
+              plantType: plantType,
             ));
       },
       child: Column(
@@ -29,7 +29,7 @@ class CatalogCard extends StatelessWidget {
               ),
               child: FutureBuilder<Image>(
                 future: Services.plantTypesService.getImageFromPlantType(
-                  plant_type,
+                  plantType,
                   width: null,
                   height: null,
                   fit: BoxFit.contain,
@@ -48,7 +48,7 @@ class CatalogCard extends StatelessWidget {
             ),
           ),
           Text(
-            plant_type.name,
+            plantType.name,
             style: Theme.of(context).textTheme.bodyText1,
           ),
         ],

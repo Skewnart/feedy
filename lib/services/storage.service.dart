@@ -32,7 +32,7 @@ class StorageService {
           return _client.storage.from("plants").download(name).then((image) {
             if (image.hasError) {
               print(
-                  "${name} non trouvé dans le bucket. Utilisation de l'image par défaut. ${image.error}");
+                  "$name non trouvé dans le bucket. Utilisation de l'image par défaut. ${image.error}");
               return Image.asset(
                 "assets/images/lambdaImage.png",
                 width: width,

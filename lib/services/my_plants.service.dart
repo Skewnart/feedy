@@ -5,13 +5,13 @@ import 'package:feedy/models/my_plant.model.dart';
 import 'package:feedy/models/plant_type.model.dart';
 
 class MyPlantsService {
-  static const plantstable = 'my_plants';
+  static const tableName = 'my_plants';
   final SupabaseClient _client;
 
   MyPlantsService(this._client);
 
   Future<List<MyPlant>> getPlants() async {
-    final response = await _client.from(plantstable).select().execute();
+    final response = await _client.from(tableName).select().execute();
     final types = await Services.plantTypesService.getPlantTypes();
     if (response.error == null) {
       final results = response.data as List<dynamic>;
@@ -33,19 +33,19 @@ class MyPlantsService {
   }
 
   Future<PostgrestResponse<dynamic>> water(MyPlant plant) async {
-    return (await _client.from(plantstable).update({
+    return (await _client.from(tableName).update({
       'last_watering': DateFormat('yyyy-MM-dd').format(DateTime.now())
     }).match({'id': plant.id}).execute());
   }
 
   Future<PostgrestResponse<dynamic>> mist(MyPlant plant) async {
-    return (await _client.from(plantstable).update({
+    return (await _client.from(tableName).update({
       'last_misting': DateFormat('yyyy-MM-dd').format(DateTime.now())
     }).match({'id': plant.id}).execute());
   }
 
   Future<PostgrestResponse<dynamic>> save(MyPlant plant) async {
-    return (await _client.from(plantstable).upsert({
+    return (await _client.from(tableName).upsert({
       if (plant.id > 0) 'id': plant.id,
       'name': plant.name,
       'plant_type_id': plant.type.id,
@@ -56,7 +56,7 @@ class MyPlantsService {
 
   Future<PostgrestResponse<dynamic>> delete(MyPlant plant) {
     return _client
-        .from(plantstable)
+        .from(tableName)
         .delete(returning: ReturningOption.representation)
         .match({'id': plant.id}).execute();
   }

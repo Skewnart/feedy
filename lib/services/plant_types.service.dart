@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:feedy/models/plant_type.model.dart';
 
 class PlantTypesService {
-  static const plant_types_table = 'plant_types';
+  static const tableName = 'plant_types';
   final SupabaseClient _client;
 
   List<PlantType>? types;
@@ -15,7 +13,7 @@ class PlantTypesService {
 
   Future<List<PlantType>> getPlantTypes({bool reset = false}) async {
     if (types == null || reset) {
-      final response = await _client.from(plant_types_table).select().execute();
+      final response = await _client.from(tableName).select().execute();
       if (response.error == null) {
         final results = response.data as List<dynamic>;
         types = results.map((e) => toPlantType(e)).toList();

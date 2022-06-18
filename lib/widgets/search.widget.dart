@@ -14,7 +14,7 @@ class SearchWidget extends StatelessWidget {
       padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 20),
       child: Card(
         elevation: 3,
-        child: Container(
+        child: SizedBox(
           height: 50,
           child: Row(
             mainAxisSize: MainAxisSize.max,
