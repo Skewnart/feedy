@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.lightGreen,
+        colorScheme: Services.colorService.scheme,
         textTheme: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
             .copyWith(
                 // headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),

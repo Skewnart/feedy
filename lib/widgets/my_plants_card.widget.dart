@@ -22,14 +22,18 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
     final int wateringDays =
         widget.plant.remainWatering < 0 ? 0 : widget.plant.remainWatering;
     final Color wateringColor = wateringDays == 0
-        ? Colors.red
-        : (wateringDays <= 2 ? Colors.orange : Colors.green);
+        ? Services.colorService.lowGauge
+        : (wateringDays <= 2
+            ? Services.colorService.middleGauge
+            : Services.colorService.highGauge);
 
     final int mistingDays =
         widget.plant.remainMisting < 0 ? 0 : widget.plant.remainMisting;
     final Color mistingColor = mistingDays == 0
-        ? Colors.red
-        : (mistingDays <= 2 ? Colors.orange : Colors.green);
+        ? Services.colorService.lowGauge
+        : (mistingDays <= 2
+            ? Services.colorService.middleGauge
+            : Services.colorService.highGauge);
 
     return GestureDetector(
       onTap: () {
@@ -43,7 +47,6 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
       },
       child: Card(
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        color: Color(0xFFFFFFFF),
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -155,10 +158,6 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                           SizedBox(
                             height: 30,
                             child: ElevatedButton(
-                              style: ButtonStyle(
-                                  foregroundColor: MaterialStateProperty.all(
-                                Colors.white,
-                              )),
                               onPressed: () {
                                 _waterClick();
                               },
@@ -171,10 +170,9 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                               child: ElevatedButton(
                                 style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all(
-                                        Color.fromARGB(255, 217, 231, 180)),
+                                        Services.colorService.secondaryColor),
                                     foregroundColor: MaterialStateProperty.all(
-                                      Colors.lightGreen,
-                                    )),
+                                        Services.colorService.primaryColor)),
                                 onPressed: () {
                                   _mistClick();
                                 },

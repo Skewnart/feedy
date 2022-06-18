@@ -52,14 +52,18 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
     final int wateringDays =
         myPlant!.remainWatering < 0 ? 0 : myPlant!.remainWatering;
     final Color wateringColor = wateringDays == 0
-        ? Colors.red
-        : (wateringDays <= 2 ? Colors.orange : Colors.green);
+        ? Services.colorService.lowGauge
+        : (wateringDays <= 2
+            ? Services.colorService.middleGauge
+            : Services.colorService.highGauge);
 
     final int mistingDays =
         myPlant!.remainMisting < 0 ? 0 : myPlant!.remainMisting;
     final Color mistingColor = mistingDays == 0
-        ? Colors.red
-        : (mistingDays <= 2 ? Colors.orange : Colors.green);
+        ? Services.colorService.lowGauge
+        : (mistingDays <= 2
+            ? Services.colorService.middleGauge
+            : Services.colorService.highGauge);
 
     return WillPopScope(
       onWillPop: () async {
@@ -392,7 +396,10 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                 },
                 tooltip: 'Supprimer la plante',
                 backgroundColor: Color.fromARGB(255, 207, 45, 34),
-                child: const Icon(Icons.delete),
+                child: const Icon(
+                  Icons.delete,
+                  color: Color(0xFFFFFFFF),
+                ),
               ),
             Padding(
                 padding: const EdgeInsetsDirectional.only(
