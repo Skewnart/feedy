@@ -37,6 +37,13 @@ class MyApp extends StatelessWidget {
                 // headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
 
                 ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+          ),
+        ),
       ),
       ///////////////////////////################################
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),

@@ -35,7 +35,7 @@ class SearchWidget extends StatelessWidget {
                   },
                   decoration: const InputDecoration(
                     isDense: true,
-                    hintText: 'Rechercher ici...',
+                    hintText: 'Je cherche une plante...',
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
                         color: Color(0x00000000),

@@ -39,11 +39,14 @@ class _CatalogPageState extends State<CatalogPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 20),
+          padding: const EdgeInsets.symmetric(vertical: 30),
           child: Text(
             'Catalogue',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline3,
+            style: Theme.of(context)
+                .textTheme
+                .headline4!
+                .copyWith(color: Colors.black),
           ),
         ),
         SearchWidget(

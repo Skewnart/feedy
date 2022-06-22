@@ -54,31 +54,34 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
-            FutureBuilder<Image>(
-              future: Services.plantTypesService.getImageFromPlantType(
-                widget.plant.type,
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: FutureBuilder<Image>(
+                future: Services.plantTypesService.getImageFromPlantType(
+                  widget.plant.type,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return snapshot.data!;
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  return const SizedBox(
+                    height: 100,
+                    width: 100,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                },
               ),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return snapshot.data!;
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
-                return const SizedBox(
-                  height: 100,
-                  width: 100,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              },
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(10, 5, 0, 5),
+                padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 0, 10),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +101,8 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                          padding:
+                              const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                           child: Text(
                             widget.plant.name ?? "---",
                             style: Theme.of(context).textTheme.bodyText1,
@@ -114,7 +118,8 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                          padding:
+                              const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                           child: Text(
                             wateringDays == 0
                                 ? "Maintenant"
@@ -136,7 +141,8 @@ class MyPlantCardState extends AuthState<MyPlantCard> {
                             style: Theme.of(context).textTheme.bodyText2,
                           ),
                           Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                5, 0, 0, 0),
                             child: Text(
                               mistingDays == 0
                                   ? "Maintenant"

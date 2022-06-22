@@ -26,11 +26,6 @@ class _CatalogViewerPageState extends State<CatalogViewerPage> {
     super.initState();
   }
 
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     if (plantType == null) {
@@ -43,96 +38,114 @@ class _CatalogViewerPageState extends State<CatalogViewerPage> {
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  FutureBuilder<Image>(
-                    future: Services.plantTypesService.getImageFromPlantType(
-                      plantType!,
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      fit: BoxFit.cover,
+              child: Stack(children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 10, left: 10),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
+            ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 40,
                     ),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return snapshot.data!;
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
-                      return const SizedBox(
-                        height: 150,
-                        width: 150,
-                        child: Center(
-                          child: CircularProgressIndicator(),
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: FutureBuilder<Image>(
+                        future:
+                            Services.plantTypesService.getImageFromPlantType(
+                          plantType!,
+                          width: MediaQuery.of(context).size.width * 0.5 - 30,
+                          fit: BoxFit.cover,
                         ),
-                      );
-                    },
-                  ),
-                  Text(
-                    plantType!.name,
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Arrosage tous les ',
-                        style: Theme.of(context).textTheme.bodyText2,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return snapshot.data!;
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+                          return const SizedBox(
+                            height: 150,
+                            width: 150,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        },
                       ),
-                      Text(
-                        plantType!.intervalWatering.toString(),
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                      Text(
-                        ' jour${plantType!.intervalWatering > 1 ? "s" : ""}',
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  if (plantType!.intervalMisting > 0)
+                    ),
+                    Text(
+                      plantType!.name,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'Brumisation tous les ',
+                          'Arrosage tous les ',
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         Text(
-                          plantType!.intervalMisting.toString(),
+                          plantType!.intervalWatering.toString(),
                           style: Theme.of(context).textTheme.bodyText1,
                         ),
                         Text(
-                          ' jour${plantType!.intervalMisting > 1 ? "s" : ""}',
+                          ' jour${plantType!.intervalWatering > 1 ? "s" : ""}',
                           style: Theme.of(context).textTheme.bodyText1,
                         ),
                       ],
                     ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.75,
-                    child: Text(
-                      plantType!.informations ?? "",
-                      textAlign: TextAlign.justify,
-                      style: Theme.of(context).textTheme.bodyText1,
+                    const SizedBox(
+                      height: 10,
                     ),
-                  ),
-                ],
+                    if (plantType!.intervalMisting > 0)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Brumisation tous les ',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                          Text(
+                            plantType!.intervalMisting.toString(),
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                          Text(
+                            ' jour${plantType!.intervalMisting > 1 ? "s" : ""}',
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                        ],
+                      ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: Text(
+                        plantType!.informations ?? "",
+                        textAlign: TextAlign.justify,
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+          ])),
         ),
       ),
       floatingActionButton: generateFloatingButton(),

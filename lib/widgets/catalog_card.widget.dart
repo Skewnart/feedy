@@ -27,23 +27,26 @@ class CatalogCard extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: FutureBuilder<Image>(
-                future: Services.plantTypesService.getImageFromPlantType(
-                  plantType,
-                  width: null,
-                  height: null,
-                  fit: BoxFit.contain,
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: FutureBuilder<Image>(
+                  future: Services.plantTypesService.getImageFromPlantType(
+                    plantType,
+                    width: null,
+                    height: null,
+                    fit: BoxFit.contain,
+                  ),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return snapshot.data!;
+                    } else if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
                 ),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return snapshot.data!;
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  }
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
               ),
             ),
           ),

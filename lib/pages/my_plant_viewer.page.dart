@@ -66,265 +66,269 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
             : Services.colorService.highGauge);
 
     return WillPopScope(
-      onWillPop: () async {
-        if (!isEditing!) {
-          return true;
-        } else {
-          return context
-              .showYesNoQuestion(
-                  title: "Modification en cours",
-                  question: "Voulez-vous sauvegarder ?")
-              .then((accepted) {
-            if (accepted) {
-              fillBackDatas();
-              return Services.myPlantsService.save(myPlant!).then((response) {
-                if (response.hasError) {
-                  context.showErrorSnackBar(
-                      message: "La sauvegarde a échouée.");
-                  return false;
-                } else {
-                  context.showSnackBar(
-                      message: "Informations sauvegardées avec succès !");
-                  return true;
-                }
-              });
-            } else {
-              return true;
-            }
-          });
-        }
-      },
+      onWillPop: canGoBack,
       child: Scaffold(
         body: SafeArea(
           child: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    FutureBuilder<Image>(
-                      future: Services.plantTypesService.getImageFromPlantType(
-                        isEditing! ? _plantType : myPlant!.type,
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        fit: BoxFit.cover,
-                      ),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return snapshot.data!;
-                        } else if (snapshot.hasError) {
-                          return Text("${snapshot.error}");
-                        }
-                        return const SizedBox(
-                          height: 150,
-                          width: 150,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, left: 10),
+                    child: IconButton(
+                      onPressed: () {
+                        canGoBack().then((goback) {
+                          if (goback) {
+                            Navigator.of(context).pop();
+                          }
+                        });
                       },
+                      icon: const Icon(Icons.arrow_back),
                     ),
-                    if (!isEditing!)
-                      Text(
-                        myPlant!.type.name,
-                        style: Theme.of(context).textTheme.headline3,
-                      ),
-                    if (isEditing!)
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        child: FutureBuilder<List<PlantType>>(
-                          future: Services.plantTypesService.getPlantTypes(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return DropdownButton<PlantType>(
-                                value: _plantType,
-                                elevation: 16,
-                                icon: const Icon(Icons.arrow_drop_down),
-                                onChanged: (PlantType? newValue) {
-                                  setState(() {
-                                    _plantType = newValue!;
-                                  });
-                                },
-                                items: snapshot.data!
-                                    .map<DropdownMenuItem<PlantType>>(
-                                        (PlantType type) {
-                                  return DropdownMenuItem<PlantType>(
-                                    value: type,
-                                    child: Text(type.name),
-                                  );
-                                }).toList(),
-                              );
-                            } else {
-                              return const Text("Chargement...");
-                            }
-                          },
-                        ),
-                      ),
-                    if (!isEditing!)
-                      Text(
-                        myPlant!.name ?? "",
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                    if (isEditing!)
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        child: TextFormField(
-                          controller: _nameController,
-                          decoration: const InputDecoration(
-                              labelText: 'Nom de la plante'),
-                        ),
-                      ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Dernier arrosage : ',
-                          style: Theme.of(context).textTheme.bodyText2,
-                        ),
-                        if (!isEditing!)
-                          Text(
-                            DateFormat('dd/MM/yyyy')
-                                .format(myPlant!.lastWatering),
-                            style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            height: 40,
                           ),
-                        if (isEditing!)
-                          GestureDetector(
-                            onTap: () {
-                              DatePicker.showDatePicker(context,
-                                  showTitleActions: true,
-                                  minTime: DateTime.now()
-                                      .subtract(const Duration(days: 90)),
-                                  maxTime: DateTime.now()
-                                      .add(const Duration(days: 90)),
-                                  theme: const DatePickerTheme(),
-                                  onConfirm: (date) {
-                                setState(() {
-                                  _datetimeWatering = date;
-                                });
-                              },
-                                  currentTime: DateTime.now(),
-                                  locale: LocaleType.fr);
-                            },
-                            child: Row(children: [
-                              Text(
-                                DateFormat('dd/MM/yyyy')
-                                    .format(_datetimeWatering),
-                                style: Theme.of(context).textTheme.bodyText1,
+                          Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: FutureBuilder<Image>(
+                              future: Services.plantTypesService
+                                  .getImageFromPlantType(
+                                isEditing! ? _plantType : myPlant!.type,
+                                width: MediaQuery.of(context).size.width * 0.5 -
+                                    30,
+                                fit: BoxFit.cover,
                               ),
-                              const Icon(Icons.arrow_drop_down),
-                            ]),
-                          ),
-                      ],
-                    ),
-                    if (!isEditing!)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Prochain : ',
-                            style: Theme.of(context).textTheme.bodyText2,
-                          ),
-                          Text(
-                            wateringDays == 0
-                                ? "Maintenant"
-                                : '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: wateringColor),
-                          ),
-                        ],
-                      ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    if ((isEditing! ? _plantType : myPlant!.type)
-                            .intervalMisting >
-                        0)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Dernierère brumisation : ',
-                            style: Theme.of(context).textTheme.bodyText2,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return snapshot.data!;
+                                } else if (snapshot.hasError) {
+                                  return Text("${snapshot.error}");
+                                }
+                                return const SizedBox(
+                                  height: 150,
+                                  width: 150,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                           if (!isEditing!)
                             Text(
-                              DateFormat('dd/MM/yyyy')
-                                  .format(myPlant!.lastMisting),
-                              style: Theme.of(context).textTheme.bodyText1,
+                              myPlant!.type.name,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.headline3,
                             ),
                           if (isEditing!)
-                            GestureDetector(
-                              onTap: () {
-                                DatePicker.showDatePicker(context,
-                                    showTitleActions: true,
-                                    minTime: DateTime.now()
-                                        .subtract(const Duration(days: 90)),
-                                    maxTime: DateTime.now()
-                                        .add(const Duration(days: 90)),
-                                    theme: const DatePickerTheme(),
-                                    onConfirm: (date) {
-                                  setState(() {
-                                    _datetimeMisting = date;
-                                  });
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              child: FutureBuilder<List<PlantType>>(
+                                future:
+                                    Services.plantTypesService.getPlantTypes(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return DropdownButton<PlantType>(
+                                      value: _plantType,
+                                      elevation: 16,
+                                      icon: const Icon(Icons.arrow_drop_down),
+                                      onChanged: (PlantType? newValue) {
+                                        setState(() {
+                                          _plantType = newValue!;
+                                        });
+                                      },
+                                      items: snapshot.data!
+                                          .map<DropdownMenuItem<PlantType>>(
+                                              (PlantType type) {
+                                        return DropdownMenuItem<PlantType>(
+                                          value: type,
+                                          child: Text(type.name),
+                                        );
+                                      }).toList(),
+                                    );
+                                  } else {
+                                    return const Text("Chargement...");
+                                  }
                                 },
-                                    currentTime: DateTime.now(),
-                                    locale: LocaleType.fr);
-                              },
-                              child: Row(children: [
+                              ),
+                            ),
+                          if (!isEditing!)
+                            Text(
+                              myPlant!.name ?? "",
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                          if (isEditing!)
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              child: TextFormField(
+                                controller: _nameController,
+                                decoration: const InputDecoration(
+                                    labelText: 'Nom de la plante'),
+                              ),
+                            ),
+                          const SizedBox(
+                            height: 40,
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Dernier arrosage : ',
+                                style: Theme.of(context).textTheme.bodyText2,
+                              ),
+                              if (!isEditing!)
                                 Text(
                                   DateFormat('dd/MM/yyyy')
-                                      .format(_datetimeMisting),
+                                      .format(myPlant!.lastWatering),
                                   style: Theme.of(context).textTheme.bodyText1,
                                 ),
-                                const Icon(Icons.arrow_drop_down),
-                              ]),
+                              if (isEditing!)
+                                GestureDetector(
+                                  onTap: () {
+                                    DatePicker.showDatePicker(context,
+                                        showTitleActions: true,
+                                        minTime: DateTime.now()
+                                            .subtract(const Duration(days: 90)),
+                                        maxTime: DateTime.now()
+                                            .add(const Duration(days: 90)),
+                                        theme: const DatePickerTheme(),
+                                        onConfirm: (date) {
+                                      setState(() {
+                                        _datetimeWatering = date;
+                                      });
+                                    },
+                                        currentTime: DateTime.now(),
+                                        locale: LocaleType.fr);
+                                  },
+                                  child: Row(children: [
+                                    Text(
+                                      DateFormat('dd/MM/yyyy')
+                                          .format(_datetimeWatering),
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                    ),
+                                    const Icon(Icons.arrow_drop_down),
+                                  ]),
+                                ),
+                            ],
+                          ),
+                          if (!isEditing!)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Prochain : ',
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                ),
+                                Text(
+                                  wateringDays == 0
+                                      ? "Maintenant"
+                                      : '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      ?.copyWith(color: wateringColor),
+                                ),
+                              ],
                             ),
+                          const SizedBox(
+                            height: 40,
+                          ),
+                          if ((isEditing! ? _plantType : myPlant!.type)
+                                  .intervalMisting >
+                              0)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Dernière brumisation : ',
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                ),
+                                if (!isEditing!)
+                                  Text(
+                                    DateFormat('dd/MM/yyyy')
+                                        .format(myPlant!.lastMisting),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                  ),
+                                if (isEditing!)
+                                  GestureDetector(
+                                    onTap: () {
+                                      DatePicker.showDatePicker(context,
+                                          showTitleActions: true,
+                                          minTime: DateTime.now().subtract(
+                                              const Duration(days: 90)),
+                                          maxTime: DateTime.now()
+                                              .add(const Duration(days: 90)),
+                                          theme: const DatePickerTheme(),
+                                          onConfirm: (date) {
+                                        setState(() {
+                                          _datetimeMisting = date;
+                                        });
+                                      },
+                                          currentTime: DateTime.now(),
+                                          locale: LocaleType.fr);
+                                    },
+                                    child: Row(children: [
+                                      Text(
+                                        DateFormat('dd/MM/yyyy')
+                                            .format(_datetimeMisting),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
+                                      ),
+                                      const Icon(Icons.arrow_drop_down),
+                                    ]),
+                                  ),
+                              ],
+                            ),
+                          if (!isEditing! && myPlant!.type.intervalMisting > 0)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Prochaine : ',
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                ),
+                                Text(
+                                  mistingDays == 0
+                                      ? "Maintenant"
+                                      : '$mistingDays jour${mistingDays > 1 ? "s" : ""}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      ?.copyWith(color: mistingColor),
+                                ),
+                              ],
+                            ),
+                          const SizedBox(
+                            height: 40,
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.75,
+                            child: Text(
+                              (isEditing! ? _plantType : myPlant!.type)
+                                      .informations ??
+                                  "",
+                              textAlign: TextAlign.justify,
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                          ),
                         ],
                       ),
-                    if (!isEditing! && myPlant!.type.intervalMisting > 0)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Prochaine : ',
-                            style: Theme.of(context).textTheme.bodyText2,
-                          ),
-                          Text(
-                            mistingDays == 0
-                                ? "Maintenant"
-                                : '$mistingDays jour${mistingDays > 1 ? "s" : ""}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(color: mistingColor),
-                          ),
-                        ],
-                      ),
-                    const SizedBox(
-                      height: 40,
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text(
-                        (isEditing! ? _plantType : myPlant!.type)
-                                .informations ??
-                            "",
-                        textAlign: TextAlign.justify,
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -448,6 +452,34 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
           child: const Icon(Icons.save),
         );
       }
+    }
+  }
+
+  Future<bool> canGoBack() async {
+    if (!isEditing!) {
+      return true;
+    } else {
+      return context
+          .showYesNoQuestion(
+              title: "Modification en cours",
+              question: "Voulez-vous sauvegarder ?")
+          .then((accepted) {
+        if (accepted) {
+          fillBackDatas();
+          return Services.myPlantsService.save(myPlant!).then((response) {
+            if (response.hasError) {
+              context.showErrorSnackBar(message: "La sauvegarde a échouée.");
+              return false;
+            } else {
+              context.showSnackBar(
+                  message: "Informations sauvegardées avec succès !");
+              return true;
+            }
+          });
+        } else {
+          return true;
+        }
+      });
     }
   }
 }
