@@ -15,6 +15,7 @@ class CatalogCard extends StatelessWidget {
         Navigator.pushNamed(context, "/catalog",
             arguments: CatalogViewerArguments(
               plantType: plantType,
+              canAdd: true,
             ));
       },
       child: Column(

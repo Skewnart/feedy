@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 
 class CatalogViewerArguments {
   final PlantType plantType;
+  final bool canAdd;
 
-  CatalogViewerArguments({required this.plantType});
+  CatalogViewerArguments({required this.plantType, required this.canAdd});
 }
 
 class CatalogViewerPage extends StatefulWidget {
@@ -20,6 +21,7 @@ class CatalogViewerPage extends StatefulWidget {
 
 class _CatalogViewerPageState extends State<CatalogViewerPage> {
   PlantType? plantType;
+  bool? canAdd;
 
   @override
   void initState() {
@@ -148,12 +150,13 @@ class _CatalogViewerPageState extends State<CatalogViewerPage> {
           ])),
         ),
       ),
-      floatingActionButton: generateFloatingButton(),
+      floatingActionButton: (canAdd! ? generateFloatingButton() : null),
     );
   }
 
   void fillDatasPage(CatalogViewerArguments args) {
     plantType = args.plantType;
+    canAdd = args.canAdd;
   }
 
   Widget generateFloatingButton() {

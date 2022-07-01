@@ -1,6 +1,7 @@
 import 'package:feedy/extensions/buildcontext.ext.dart';
 import 'package:feedy/models/my_plant.model.dart';
 import 'package:feedy/models/plant_type.model.dart';
+import 'package:feedy/pages/catalog_viewer.page.dart';
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -406,19 +407,37 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                   color: Color(0xFFFFFFFF),
                 ),
               ),
-            Padding(
+            if (myPlant!.type != null)
+              Padding(
                 padding: const EdgeInsetsDirectional.only(
                   start: 20,
                 ),
                 child: FloatingActionButton(
                   onPressed: () {
-                    setState(() {
-                      isEditing = true;
-                    });
+                    Navigator.pushNamed(context, "/catalog",
+                        arguments: CatalogViewerArguments(
+                          plantType: myPlant!.type,
+                          canAdd: false,
+                        ));
                   },
-                  tooltip: 'Editer la plante',
-                  child: const Icon(Icons.edit),
-                )),
+                  tooltip: 'Voir les infos',
+                  child: const Icon(Icons.info),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(
+                start: 20,
+              ),
+              child: FloatingActionButton(
+                onPressed: () {
+                  setState(() {
+                    isEditing = true;
+                  });
+                },
+                tooltip: 'Editer la plante',
+                child: const Icon(Icons.edit),
+              ),
+            ),
           ],
         );
       } else {
