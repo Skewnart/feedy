@@ -10,7 +10,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-
   Future<void> _signOut() async {
     final response = await Services.authService.signOut();
     final error = response.error;
@@ -66,7 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   FutureBuilder(
-                      future: Services.packageService.getVersion(),
+                      future: Services.appService.getVersion(),
                       builder: ((context, snapshot) {
                         if (snapshot.hasData) {
                           return Text(
