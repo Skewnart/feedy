@@ -24,6 +24,7 @@ class MyPlantViewerPage extends StatefulWidget {
 class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
   final TextEditingController _nameController = TextEditingController();
   late DateTime _datetimeWatering;
+  late DateTime _datetimeAcquisition;
   late DateTime _datetimeMisting;
   late PlantType _plantType;
 
@@ -178,7 +179,57 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                               ),
                             ),
                           const SizedBox(
-                            height: 40,
+                            height: 30,
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Date d\'acquisition : ',
+                                style: Theme.of(context).textTheme.bodyText2,
+                              ),
+                              if (!isEditing!)
+                                Text(
+                                  DateFormat('dd/MM/yyyy')
+                                      .format(myPlant!.acquisitionDate),
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                              if (!isEditing!)
+                                Text(
+                                  ' (${myPlant!.possessionDurationString})',
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                              if (isEditing!)
+                                GestureDetector(
+                                  onTap: () {
+                                    DatePicker.showDatePicker(context,
+                                        showTitleActions: true,
+                                        minTime: DateTime(2000, 01, 01),
+                                        maxTime: DateTime.now()
+                                            .add(const Duration(days: 90)),
+                                        theme: const DatePickerTheme(),
+                                        onConfirm: (date) {
+                                      setState(() {
+                                        _datetimeAcquisition = date;
+                                      });
+                                    },
+                                        currentTime: DateTime.now(),
+                                        locale: LocaleType.fr);
+                                  },
+                                  child: Row(children: [
+                                    Text(
+                                      DateFormat('dd/MM/yyyy')
+                                          .format(_datetimeAcquisition),
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                    ),
+                                    const Icon(Icons.arrow_drop_down),
+                                  ]),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
                           ),
                           Row(
                             mainAxisSize: MainAxisSize.min,
@@ -243,7 +294,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
                               ],
                             ),
                           const SizedBox(
-                            height: 40,
+                            height: 20,
                           ),
                           if ((isEditing! ? _plantType : myPlant!.type)
                                   .intervalMisting >
@@ -347,6 +398,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
     _plantType = myPlant!.type;
     _datetimeWatering = myPlant!.lastWatering;
     _datetimeMisting = myPlant!.lastMisting;
+    _datetimeAcquisition = myPlant!.acquisitionDate;
   }
 
   void fillBackDatas() {
@@ -354,6 +406,7 @@ class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
     myPlant!.type = _plantType;
     myPlant!.lastWatering = _datetimeWatering;
     myPlant!.lastMisting = _datetimeMisting;
+    myPlant!.acquisitionDate = _datetimeAcquisition;
     myPlant!.resetRemainings();
   }
 

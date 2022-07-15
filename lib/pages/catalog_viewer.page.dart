@@ -170,8 +170,8 @@ class _CatalogViewerPageState extends State<CatalogViewerPage> {
           if (acc) {
             Navigator.pushNamed(context, "/plant",
                 arguments: MyPlantViewerArguments(
-                  myPlant: MyPlant(
-                      0, null, plantType!, DateTime.now(), DateTime.now()),
+                  myPlant: MyPlant(0, null, plantType!, DateTime.now(),
+                      DateTime.now(), DateTime.now()),
                   directEditing: true,
                 )).then((ret) {
               if (ret != null) {

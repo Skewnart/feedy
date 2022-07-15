@@ -29,6 +29,7 @@ class MyPlantsService {
       types.firstWhere((type) => type.id == result['plant_type_id']),
       DateTime.parse(result['last_watering']),
       DateTime.parse(result['last_misting']),
+      DateTime.parse(result['acquisition_date']),
     );
   }
 
@@ -51,6 +52,8 @@ class MyPlantsService {
       'plant_type_id': plant.type.id,
       'last_watering': DateFormat('yyyy-MM-dd').format(plant.lastWatering),
       'last_misting': DateFormat('yyyy-MM-dd').format(plant.lastMisting),
+      'acquisition_date':
+          DateFormat('yyyy-MM-dd').format(plant.acquisitionDate),
     }).execute());
   }
 
