@@ -2,14 +2,18 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StorageService {
   String? path;
   final SupabaseClient _client;
+  late FlutterSecureStorage _secure_storage;
 
-  StorageService(this._client);
+  StorageService(this._client) {
+    _secure_storage = const FlutterSecureStorage();
+  }
 
   Future<String> getPath(String filename) async {
     String dir =
@@ -68,5 +72,13 @@ class StorageService {
       {double? width, double? height, BoxFit? fit}) {
     return getImageFromName("$name.png",
         width: width, height: height, fit: fit);
+  }
+
+  Future<void> setValue(String key, String? value) {
+    return _secure_storage.write(key: key, value: value);
+  }
+
+  Future<String?> getValue(String key) {
+    return _secure_storage.read(key: key);
   }
 }
