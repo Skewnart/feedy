@@ -30,7 +30,7 @@ class _LoginPageState extends AuthState<LoginPage> {
     if (error != null) {
       context.showErrorSnackBar(message: error.message);
     } else {
-      context.showSnackBar(message: 'Check your email for login link!');
+      context.showSnackBar(message: 'Cliquez sur le lien dans vos mails !');
       _emailController.clear();
     }
 
@@ -54,36 +54,102 @@ class _LoginPageState extends AuthState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 80, bottom: 40),
-            child: Text(
-              "ICONE ICI",
-              style: Theme.of(context).textTheme.headline3,
-            ),
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 50,
+                ),
+                child: FutureBuilder<Image>(
+                  future: Services.storageService.getImageFromPngName(
+                    "icon",
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    fit: BoxFit.cover,
+                  ),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return snapshot.data!;
+                    } else if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    }
+                    return const SizedBox(
+                      height: 150,
+                      width: 150,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 10),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Bienvenue !',
+                        style: Theme.of(context).textTheme.titleLarge),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Flexible(
+                      child: Text(
+                          'Entrez votre adresse email, nous vous enverrons un lien pour vous connecter sans mot de passe !',
+                          style: Theme.of(context).textTheme.bodyText2),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.all(20),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          labelText: 'Entrez votre adresse email',
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFFF1F4F8),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFFF1F4F8),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                onPressed: _isLoading ? null : _signIn,
+                child: Text(_isLoading ? 'Chargement...' : 'Envoyer le lien'),
+              ),
+            ],
           ),
-          const SizedBox(height: 50),
-          const Center(
-            child: Text(
-              'Bienvenue sur Feedy !',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(height: 25),
-          const Text('Connectez-vous grâce au lien magique :'),
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: _emailController,
-            decoration: const InputDecoration(labelText: 'Email'),
-          ),
-          const SizedBox(height: 18),
-          ElevatedButton(
-            onPressed: _isLoading ? null : _signIn,
-            child: Text(_isLoading ? 'Chargement...' : 'Envoyer le mail'),
-          ),
-        ],
+        ),
       ),
     );
   }
