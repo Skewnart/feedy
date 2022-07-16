@@ -44,9 +44,6 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      ///////////////////////////################################
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      ///////////////////////////################################
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/': (_) => const SplashPage(),
