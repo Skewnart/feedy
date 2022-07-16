@@ -1,9 +1,27 @@
 # feedy
 
-## Edition
+## Description
 
-J'éditerai à la fin du projet.
+Feedy is a Flutter application to keep up to date watering and misting informations about all your house plants.
 
-# Editing this README (je garde juste cette partie du README d'origine, pour m'en rappeler)
+## Installation
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+Have [Flutter](https://docs.flutter.dev/get-started/install) up to date to compile the project.
+
+Then run :
+
+`flutter pub get`
+
+**1) Debugging**
+
+Plug smartphone. Then run `flutter run`
+
+**1.1) WiFi debugging**
+
+Once plugged in, run `adb tcpip 5555` then `adb connect ip_address`. Unplug.
+
+**2) Build**
+
+Run `flutter build apk` (for android), and move into *build\app\outputs\flutter-apk*.
+
+Take *app.apk*
