@@ -1,3 +1,4 @@
+import 'package:feedy/models/lang.dart';
 import 'package:feedy/services/services.dart';
 
 class LangService {
@@ -10,21 +11,19 @@ class LangService {
     },
   };
 
-  var langs = {
-    "fr": "Français",
-    "en": "English",
-  };
+  var langs = [
+    Lang("fr", "Français"),
+  ];
 
   LangService();
 
-  Future<String> getLang() async {
-    return Services.storageService
-        .getValue("lang")
-        .then((lang) => lang ?? "fr");
+  Future<Lang> getLang() async {
+    return Services.storageService.getValue("lang").then((lang) =>
+        langs.firstWhere((element) => element.code == (lang ?? "fr")));
   }
 
-  Future<void> setLang(String lang) {
-    return Services.storageService.setValue("lang", lang);
+  Future<void> setLang(Lang? lang) {
+    return Services.storageService.setValue("lang", lang?.code ?? "fr");
   }
 
   Future<String> getLabel(String key) {

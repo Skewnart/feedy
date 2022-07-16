@@ -1,3 +1,4 @@
+import 'package:feedy/models/lang.dart';
 import 'package:flutter/material.dart';
 import 'package:feedy/services/services.dart';
 import 'package:feedy/extensions/buildcontext.ext.dart';
@@ -81,6 +82,67 @@ class _SettingsPageState extends State<SettingsPage> {
                       }))
                 ],
               ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 60,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  "Langue ",
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ),
+              FutureBuilder<Lang>(
+                  future: Services.langService.getLang(),
+                  builder: ((context, snapshot) {
+                    if (snapshot.hasData) {
+                      return DropdownButton<Lang>(
+                        value: snapshot.data!,
+                        onChanged: (newlang) {
+                          setState(() {
+                            Services.langService.setLang(newlang);
+                          });
+                        },
+                        items: Services.langService.langs
+                            .map((lang) => DropdownMenuItem(
+                                  value: lang,
+                                  child: Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      lang.label,
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
+                        selectedItemBuilder: (BuildContext context) =>
+                            Services.langService.langs
+                                .map((lang) => Center(
+                                      child: Text(
+                                        lang.label,
+                                      ),
+                                    ))
+                                .toList(),
+                        hint: const Center(
+                          child: Text(
+                            'langue',
+                          ),
+                        ),
+                        underline: Container(),
+                      );
+                    } else {
+                      return Text(
+                        "...",
+                        style: Theme.of(context).textTheme.bodyText1,
+                      );
+                    }
+                  }))
             ],
           ),
         ),
