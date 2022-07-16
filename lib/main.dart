@@ -13,9 +13,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://dkakpeueinbiwnsrzyxm.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrYWtwZXVlaW5iaXduc3J6eXhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDkyNTkyMDAsImV4cCI6MTk2NDgzNTIwMH0.FpVjbCgGgatvgRwrw5CIcxeunUoxAaALvHF6kuuYon8',
+    url: 'INSERT URL HERE',
+    anonKey: 'INSERT ANON KEY HERE',
   );
   Services.initialize();
 
