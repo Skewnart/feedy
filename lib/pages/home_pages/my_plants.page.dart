@@ -44,11 +44,25 @@ class _MyplantsPageState extends State<MyplantsPage> {
                 .copyWith(color: Colors.black),
           ),
         ),
-        SearchWidget(
-            searchController: searchController,
-            notifyParent: () {
-              setState(() {});
-            }),
+        FutureBuilder<int>(
+          future: getPlantsCount(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if ((snapshot.data as int) > 0) {
+                return SearchWidget(
+                    searchController: searchController,
+                    notifyParent: () {
+                      setState(() {});
+                    });
+              } else {
+                return const Text("");
+              }
+            } else if (snapshot.hasError) {
+              return Text("Erreur ${snapshot.error}");
+            }
+            return const Text("...");
+          },
+        ),
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
@@ -65,17 +79,35 @@ class _MyplantsPageState extends State<MyplantsPage> {
                         .compareTo(y.type.intervalMisting > 0
                             ? min(y.remainWatering, y.remainMisting)
                             : y.remainWatering));
-                  return ListView.builder(
-                    itemBuilder: (buildContext, index) {
-                      return MyPlantCard(
-                        plant: plants[index],
-                        notifyParent: refresh,
-                      );
-                    },
-                    itemCount: plants.length,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    scrollDirection: Axis.vertical,
-                  );
+                  if (plants.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Vous n'avez pas de plantes ?",
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          Text(
+                            "Ajoutez-les depuis le catalogue !",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return ListView.builder(
+                      itemBuilder: (buildContext, index) {
+                        return MyPlantCard(
+                          plant: plants[index],
+                          notifyParent: refresh,
+                        );
+                      },
+                      itemCount: plants.length,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      scrollDirection: Axis.vertical,
+                    );
+                  }
                 } else if (snapshot.hasError) {
                   return Text(
                       "Erreur dans le chargement des données : ${snapshot.error}");
@@ -116,5 +148,11 @@ class _MyplantsPageState extends State<MyplantsPage> {
       }
       return plants;
     }
+  }
+
+  Future<int> getPlantsCount() async {
+    plantsList ??= await Services.myPlantsService.getPlants();
+
+    return plantsList?.length ?? 0;
   }
 }
