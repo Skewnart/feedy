@@ -1,6 +1,5 @@
 import 'package:feedy/extensions/buildcontext.ext.dart';
 import 'package:feedy/models/my_plant.model.dart';
-import 'package:feedy/modules/authentication/auth_state.dart';
 import 'package:feedy/pages/my_plant_viewer.page.dart';
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,7 @@ class MyPlantCard extends StatefulWidget {
   MyPlantCardState createState() => MyPlantCardState();
 }
 
-class MyPlantCardState extends AuthState<MyPlantCard> {
+class MyPlantCardState extends State<MyPlantCard> {
   @override
   Widget build(BuildContext context) {
     final int wateringDays =

@@ -1,6 +1,7 @@
 import 'package:feedy/extensions/buildcontext.ext.dart';
 import 'package:feedy/models/my_plant.model.dart';
 import 'package:feedy/models/plant_type.model.dart';
+import 'package:feedy/modules/authentication/auth_required_state.dart';
 import 'package:feedy/pages/catalog_viewer.page.dart';
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class MyPlantViewerPage extends StatefulWidget {
   State<MyPlantViewerPage> createState() => _MyPlantViewerPageState();
 }
 
-class _MyPlantViewerPageState extends State<MyPlantViewerPage> {
+class _MyPlantViewerPageState extends AuthRequiredState<MyPlantViewerPage> {
   final TextEditingController _nameController = TextEditingController();
   late DateTime _datetimeWatering;
   late DateTime _datetimeAcquisition;

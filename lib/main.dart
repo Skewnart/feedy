@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:feedy/services/services.dart';
-import 'package:feedy/pages/old/account_page.dart';
 import 'package:feedy/pages/home.page.dart';
 import 'package:feedy/pages/login.page.dart';
-import 'package:feedy/pages/splash.page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -50,11 +48,9 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      initialRoute: '/',
+      initialRoute: '/home',
       routes: <String, WidgetBuilder>{
-        '/': (_) => const SplashPage(),
         '/login': (_) => const LoginPage(),
-        '/account': (_) => const AccountPage(),
         '/home': (_) => const MyHomePage(),
         '/plant': (_) => const MyPlantViewerPage(),
         '/catalog': (_) => const CatalogViewerPage(),

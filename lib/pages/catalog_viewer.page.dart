@@ -1,6 +1,7 @@
 import 'package:feedy/extensions/buildcontext.ext.dart';
 import 'package:feedy/models/my_plant.model.dart';
 import 'package:feedy/models/plant_type.model.dart';
+import 'package:feedy/modules/authentication/auth_required_state.dart';
 import 'package:feedy/pages/my_plant_viewer.page.dart';
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class CatalogViewerPage extends StatefulWidget {
   State<CatalogViewerPage> createState() => _CatalogViewerPageState();
 }
 
-class _CatalogViewerPageState extends State<CatalogViewerPage> {
+class _CatalogViewerPageState extends AuthRequiredState<CatalogViewerPage> {
   PlantType? plantType;
   bool? canAdd;
 
