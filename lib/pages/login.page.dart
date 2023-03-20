@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
+import 'package:feedy/modules/authentication/no_auth_required_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase/supabase.dart';
-import 'package:feedy/modules/authentication/auth_state.dart';
 import 'package:feedy/extensions/buildcontext.ext.dart';
 import 'package:feedy/services/services.dart';
 
@@ -12,42 +12,57 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends AuthState<LoginPage> {
+class _LoginPageState extends NoAuthRequiredState<LoginPage> {
   bool _isLoading = false;
   late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
 
-  Future<void> _signIn() async {
+  Future<FirebaseApp> _initializeFirebase() async {
+    FirebaseApp firebaseApp = await Firebase.initializeApp();
+    return firebaseApp;
+  }
+
+  Future<User?> signInUsingEmailPassword() async {
     setState(() {
       _isLoading = true;
     });
-    final response = await Services.authService.signIn(
-        email: _emailController.text,
-        options: AuthOptions(
-            redirectTo: kIsWeb
-                ? null
-                : 'io.supabase.flutterquickstart://login-callback/'));
-    final error = response.error;
-    if (error != null) {
-      context.showErrorSnackBar(message: error.message);
-    } else {
-      context.showSnackBar(message: 'Cliquez sur le lien dans vos mails !');
-      _emailController.clear();
+
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user;
+
+    try {
+      await auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        context.showErrorSnackBar(message: 'Cet email n\'est pas enregistré.');
+      } else if (e.code == 'wrong-password') {
+        context.showErrorSnackBar(message: 'Mot de passe erroné.');
+      } else if (e.code == 'invalid-email') {
+        context.showErrorSnackBar(message: 'L\'email est mal formatté.');
+      }
     }
 
     setState(() {
       _isLoading = false;
     });
+
+    return user;
   }
 
   @override
   void initState() {
     super.initState();
     _emailController = TextEditingController();
+    _passwordController = TextEditingController();
   }
 
   @override
   void dispose() {
     _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -100,7 +115,7 @@ class _LoginPageState extends AuthState<LoginPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
@@ -113,7 +128,7 @@ class _LoginPageState extends AuthState<LoginPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsetsDirectional.all(20),
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 10),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -143,8 +158,57 @@ class _LoginPageState extends AuthState<LoginPage> {
                   ],
                 ),
               ),
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        obscureText: true,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Entrez votre mot de passe',
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFFF1F4F8),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFFF1F4F8),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              FutureBuilder(
+                future: _initializeFirebase(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return Column(
+                      children: const [
+                        Text('Login firebase done'),
+                      ],
+                    );
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
               ElevatedButton(
-                onPressed: _isLoading ? null : _signIn,
+                onPressed: _isLoading ? null : signInUsingEmailPassword,
                 child: Text(_isLoading ? 'Chargement...' : 'Envoyer le lien'),
               ),
             ],
