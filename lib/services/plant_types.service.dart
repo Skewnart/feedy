@@ -28,7 +28,7 @@ class PlantTypesService {
   //Charger l'image du bucket si elle n'a pas déjà été téléchargée
   Future<Image> getImageFromPlantType(PlantType type,
       {double? width, double? height, BoxFit? fit}) {
-    return Services.storageService.getImageFromName(type.imageName,
+    return Services.storageService.getImageFromName("plants/" + type.imageName,
         width: width, height: height, fit: fit);
   }
 

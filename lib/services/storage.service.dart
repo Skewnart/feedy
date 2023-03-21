@@ -1,19 +1,16 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:feedy/services/services.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StorageService {
   String? path;
-  final SupabaseClient _client;
-  late FlutterSecureStorage _secure_storage;
+  final FirebaseStorage _storage;
+  final FlutterSecureStorage _secureStorage;
 
-  StorageService(this._client) {
-    _secure_storage = const FlutterSecureStorage();
-  }
+  StorageService(this._storage, this._secureStorage) {}
 
   Future<String> getPath(String filename) async {
     String dir =
@@ -30,30 +27,35 @@ class StorageService {
   //Charger l'image du bucket si elle n'a pas déjà été téléchargée
   Future<Image> getImageFromName(String name,
       {double? width, double? height, BoxFit? fit}) {
-    return Services.storageService.getPath(name).then((filepath) {
+    print("##test " + name);
+    return getPath(name).then((filepath) {
       return File(filepath).exists().then((exists) {
         if (!exists) {
-          return _client.storage.from("plants").download(name).then((image) {
-            if (image.hasError) {
-              print(
-                  "$name non trouvé dans le bucket. Utilisation de l'image par défaut. ${image.error}");
-              return Image.asset(
-                "assets/images/lambdaImage.png",
-                width: width,
-                height: height,
-                fit: fit,
-              );
-            } else {
+          try {
+            return _storage
+                .ref()
+                .child(name)
+                .getData(1024 * 1024)
+                .then((image) {
               print("$name téléchargée. Ecriture fichier.");
-              Services.storageService.writeFile(name, image.data!);
+              writeFile(name, image!);
               return Image.memory(
-                image.data!,
+                image,
                 width: width,
                 height: height,
                 fit: fit,
               );
-            }
-          });
+            });
+          } on FirebaseException catch (fe) {
+            print(
+                "$name non trouvé dans le bucket. Utilisation de l'image par défaut. ${fe.code} - ${fe.message}");
+            return Image.asset(
+              "assets/images/lambdaImage.png",
+              width: width,
+              height: height,
+              fit: fit,
+            );
+          }
         } else {
           print("$name trouvé dans le stockage. Chargement du fichier.");
           return Image.file(
@@ -75,10 +77,10 @@ class StorageService {
   }
 
   Future<void> setValue(String key, String? value) {
-    return _secure_storage.write(key: key, value: value);
+    return _secureStorage.write(key: key, value: value);
   }
 
   Future<String?> getValue(String key) {
-    return _secure_storage.read(key: key);
+    return _secureStorage.read(key: key);
   }
 }

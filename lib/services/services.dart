@@ -3,6 +3,8 @@ import 'package:feedy/services/app.service.dart';
 import 'package:feedy/services/lang.service.dart';
 import 'package:feedy/services/plant_types.service.dart';
 import 'package:feedy/services/storage.service.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:feedy/services/my_plants.service.dart';
 
@@ -19,7 +21,8 @@ class Services {
     final client = Supabase.instance.client;
     myPlantsService = MyPlantsService(client);
     plantTypesService = PlantTypesService(client);
-    storageService = StorageService(client);
+    storageService =
+        StorageService(FirebaseStorage.instance, const FlutterSecureStorage());
     authService = client.auth;
     appService = AppService();
     colorService = ColorService();
