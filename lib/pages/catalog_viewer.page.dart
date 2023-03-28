@@ -171,7 +171,7 @@ class _CatalogViewerPageState extends AuthRequiredState<CatalogViewerPage> {
           if (acc) {
             Navigator.pushNamed(context, "/plant",
                 arguments: MyPlantViewerArguments(
-                  myPlant: MyPlant(0, null, plantType!, DateTime.now(),
+                  myPlant: MyPlant("-1", null, plantType!, DateTime.now(),
                       DateTime.now(), DateTime.now()),
                   directEditing: true,
                 )).then((ret) {

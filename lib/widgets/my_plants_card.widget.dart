@@ -217,7 +217,7 @@ class MyPlantCardState extends State<MyPlantCard> {
           } else {
             context.showErrorSnackBar(
                 message: "$name n'a pas pu être arrosée !");
-            print(response.error);
+            print(response.errorMessage);
           }
         });
       }
@@ -239,7 +239,7 @@ class MyPlantCardState extends State<MyPlantCard> {
         } else {
           context.showErrorSnackBar(
               message: "$name n'a pas pu être brumisée !");
-          print(response.error);
+          print(response.errorMessage);
         }
       });
     });

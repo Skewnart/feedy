@@ -1,26 +1,20 @@
 import 'package:feedy/services/services.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:feedy/models/plant_type.model.dart';
 
 class PlantTypesService {
-  static const tableName = 'plant_types';
-  final SupabaseClient _client;
-
+  static const tableName = 'plantType';
   List<PlantType>? types;
 
-  PlantTypesService(this._client);
+  PlantTypesService();
 
   Future<List<PlantType>> getPlantTypes({bool reset = false}) async {
     if (types == null || reset) {
-      final response = await _client.from(tableName).select().execute();
-      if (response.error == null) {
-        final results = response.data as List<dynamic>;
-        types = results.map((e) => toPlantType(e)).toList();
-      } else {
-        print('Error fetching plant types: ${response.error!.message}');
-        return [];
-      }
+      final plantTypes =
+          await Services.databaseService.getTableContent(tableName);
+      if (plantTypes.isEmpty) return [];
+
+      types = plantTypes.map((e) => toPlantType(e)).toList();
     }
     return types!;
   }
@@ -34,12 +28,10 @@ class PlantTypesService {
 
   PlantType toPlantType(Map<String, dynamic> result) {
     return PlantType(
-      result['id'],
-      result['name'],
-      result['image_name'],
-      result['interval_watering'],
-      result['interval_misting'],
-      result['informations'],
-    );
+        result['id'],
+        result['image_name'],
+        result['interval_watering'],
+        result['interval_misting'],
+        result['informations']);
   }
 }

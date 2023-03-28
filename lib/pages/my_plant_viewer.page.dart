@@ -423,7 +423,7 @@ class _MyPlantViewerPageState extends AuthRequiredState<MyPlantViewerPage> {
         return Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            if (myPlant!.id > 0)
+            if (myPlant!.id != "-1")
               FloatingActionButton(
                 onPressed: () {
                   context
@@ -439,8 +439,7 @@ class _MyPlantViewerPageState extends AuthRequiredState<MyPlantViewerPage> {
                         if (accepted) {
                           final response =
                               await Services.myPlantsService.delete(myPlant!);
-                          if (response.hasError ||
-                              (response.data as List<dynamic>).isEmpty) {
+                          if (response.hasError) {
                             context.showErrorSnackBar(
                                 message: "La suppression n'a pas fonctionné !");
                           } else {
@@ -504,10 +503,9 @@ class _MyPlantViewerPageState extends AuthRequiredState<MyPlantViewerPage> {
                 if (response.hasError) {
                   context.showErrorSnackBar(
                       message: "La sauvegarde a échouée.");
-                  print(response.error!.message);
                 } else {
-                  if (myPlant!.id == 0) {
-                    myPlant!.id = response.data[0]['id'];
+                  if (myPlant!.id == "-1") {
+                    myPlant!.id = response.infos;
                     Navigator.of(context).pop(myPlant!);
                   }
                   isEditing = false;

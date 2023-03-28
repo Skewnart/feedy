@@ -1,8 +1,7 @@
 import 'package:feedy/models/plant_type.model.dart';
-import 'package:flutter/material.dart';
 
 class MyPlant {
-  int id;
+  String id;
   String? name;
   PlantType type;
   DateTime lastWatering;

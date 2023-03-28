@@ -21,13 +21,20 @@ class StorageService {
   void writeFile(String filename, Uint8List data) async {
     String dir =
         path ?? (path = (await getApplicationDocumentsDirectory()).path);
-    File("$dir/$filename").writeAsBytes(data);
+    File file = File("$dir/$filename");
+
+    //Si le parent n'existe pas on le crée (récursivement)
+    file.parent.exists().then((exists) async {
+      if (!exists) {
+        await file.parent.create(recursive: true);
+      }
+      file.writeAsBytes(data);
+    });
   }
 
   //Charger l'image du bucket si elle n'a pas déjà été téléchargée
   Future<Image> getImageFromName(String name,
       {double? width, double? height, BoxFit? fit}) {
-    print("##test " + name);
     return getPath(name).then((filepath) {
       return File(filepath).exists().then((exists) {
         if (!exists) {
