@@ -2,7 +2,6 @@ import 'package:feedy/pages/catalog_viewer.page.dart';
 import 'package:feedy/pages/my_plant_viewer.page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:feedy/services/services.dart';
 import 'package:feedy/pages/home.page.dart';
 import 'package:feedy/pages/login.page.dart';
@@ -16,10 +15,6 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await Supabase.initialize(
-    url: 'INSERT URL HERE',
-    anonKey: 'INSERT ANON KEY HERE',
-  );
   Services.initialize();
 
   runApp(const MyApp());
