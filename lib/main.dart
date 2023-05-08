@@ -7,6 +7,14 @@ import 'package:feedy/pages/home.page.dart';
 import 'package:feedy/pages/login.page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:rxdart/rxdart.dart';
+
+final _messageStreamController = BehaviorSubject<RemoteMessage>();
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,8 +23,30 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  Services.initialize();
+  final messaging = FirebaseMessaging.instance;
 
+  //Permission messaging pour IOS/Web
+  final settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+  print('Permission granted: ${settings.authorizationStatus}');
+
+  String? token = await messaging.getToken();
+  print('Registration Token=$token');
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    _messageStreamController.sink.add(message);
+  });
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  Services.initialize();
   runApp(const MyApp());
 }
 
