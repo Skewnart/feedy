@@ -285,7 +285,7 @@ class _MyPlantViewerPageState extends AuthRequiredState<MyPlantViewerPage> {
                                 ),
                                 Text(
                                   wateringDays == 0
-                                      ? "Maintenant"
+                                      ? "Aujourd'hui"
                                       : '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
                                   style: Theme.of(context)
                                       .textTheme
@@ -355,7 +355,7 @@ class _MyPlantViewerPageState extends AuthRequiredState<MyPlantViewerPage> {
                                 ),
                                 Text(
                                   mistingDays == 0
-                                      ? "Maintenant"
+                                      ? "Aujourd'hui"
                                       : '$mistingDays jour${mistingDays > 1 ? "s" : ""}',
                                   style: Theme.of(context)
                                       .textTheme

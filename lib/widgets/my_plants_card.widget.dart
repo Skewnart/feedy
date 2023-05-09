@@ -121,7 +121,7 @@ class MyPlantCardState extends State<MyPlantCard> {
                               const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                           child: Text(
                             wateringDays == 0
-                                ? "Maintenant"
+                                ? "Aujourd'hui"
                                 : '$wateringDays jour${wateringDays > 1 ? "s" : ""}',
                             style: Theme.of(context)
                                 .textTheme
@@ -144,7 +144,7 @@ class MyPlantCardState extends State<MyPlantCard> {
                                 5, 0, 0, 0),
                             child: Text(
                               mistingDays == 0
-                                  ? "Maintenant"
+                                  ? "Aujourd'hui"
                                   : '$mistingDays jour${mistingDays > 1 ? "s" : ""}',
                               style: Theme.of(context)
                                   .textTheme
