@@ -1,8 +1,8 @@
 import 'package:feedy/models/lang.dart';
+import 'package:feedy/models/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:feedy/services/services.dart';
-import 'package:feedy/extensions/buildcontext.ext.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -87,7 +87,16 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ),
         const SizedBox(
-          height: 60,
+          height: 20,
+        ),
+        Center(
+          child: Text(
+            "Paramètres",
+            style: Theme.of(context).textTheme.headline5,
+          ),
+        ),
+        const SizedBox(
+          height: 40,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -147,12 +156,53 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
         ),
-        Expanded(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  "Activer les alertes",
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ),
+              FutureBuilder<Settings?>(
+                future: Services.settingsService.getSettings(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final settings = snapshot.data;
+                    if (settings != null) {
+                      return Switch(
+                        value: settings.wantsNotification,
+                        onChanged: (value) {
+                          Services.settingsService
+                              .setSettings(value)
+                              .then((value) {
+                            setState(() {});
+                          });
+                        },
+                      );
+                    } else {
+                      return Text(
+                        "...",
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      );
+                    }
+                  } else if (snapshot.hasError) {
+                    return const Text("...");
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        const Expanded(
           child: Center(
-            child: Text(
-              "Paramètres",
-              style: Theme.of(context).textTheme.headline5,
-            ),
+            child: Text(""),
           ),
         ),
         Padding(

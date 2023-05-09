@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:feedy/models/settings.dart' as setMod;
 
 class DatabaseService {
   final FirebaseFirestore _firestore;
@@ -32,6 +33,31 @@ class DatabaseService {
         return map;
       }).toList();
     });
+  }
+
+  Future<Map<String, dynamic>?> getUserData() async {
+    if (FirebaseAuth.instance.currentUser == null) return null;
+
+    return _firestore
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .get()
+        .then((event) {
+      return event.data();
+    });
+  }
+
+  Future<bool> setUserData(setMod.Settings settings) async {
+    if (FirebaseAuth.instance.currentUser == null) return false;
+
+    final userRef = _firestore
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser?.uid);
+
+    return userRef.update({
+      "ask_notification": settings.wantsNotification,
+      "fcm_token": settings.fcmToken
+    }).then((value) => true, onError: (e) => false);
   }
 
   Future<DatabaseMessage> setDataWithUser(
@@ -72,17 +98,17 @@ class DatabaseService {
       return DatabaseMessage(true, "User non connecté", '');
     }
     DatabaseMessage? toreturn;
-    
+
     await _firestore
-          .collection("users")
-          .doc(FirebaseAuth.instance.currentUser?.uid)
-          .collection(tableName)
-          .doc(id)
-          .delete()
-          .onError((e, _) {
-        toreturn = DatabaseMessage(true, "Erreur dans la sauvegarde : $e", '');
-      });
-    
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .collection(tableName)
+        .doc(id)
+        .delete()
+        .onError((e, _) {
+      toreturn = DatabaseMessage(true, "Erreur dans la sauvegarde : $e", '');
+    });
+
     toreturn ??= DatabaseMessage(false, '', id);
     return toreturn!;
   }

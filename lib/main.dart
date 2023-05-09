@@ -37,9 +37,6 @@ Future<void> main() async {
   );
   print('Permission granted: ${settings.authorizationStatus}');
 
-  String? token = await messaging.getToken();
-  print('Registration Token=$token');
-
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     _messageStreamController.sink.add(message);
   });
