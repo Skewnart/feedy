@@ -17,11 +17,6 @@ class _LoginPageState extends NoAuthRequiredState<LoginPage> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
 
-  Future<FirebaseApp> _initializeFirebase() async {
-    FirebaseApp firebaseApp = await Firebase.initializeApp();
-    return firebaseApp;
-  }
-
   Future<User?> signInUsingEmailPassword() async {
     setState(() {
       _isLoading = true;
@@ -42,6 +37,8 @@ class _LoginPageState extends NoAuthRequiredState<LoginPage> {
         context.showErrorSnackBar(message: 'Mot de passe erroné.');
       } else if (e.code == 'invalid-email') {
         context.showErrorSnackBar(message: 'L\'email est mal formatté.');
+      } else if (e.code == 'unknown') {
+        context.showErrorSnackBar(message: 'Connexion impossible.');
       }
     }
 
@@ -118,15 +115,11 @@ class _LoginPageState extends NoAuthRequiredState<LoginPage> {
                 ),
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Flexible(
-                        child: Text(
-                            'Entrez votre adresse email, nous vous enverrons un lien pour vous connecter sans mot de passe !',
-                            style: Theme.of(context).textTheme.bodyText2),
-                      ),
-                    ],
+                  child: Center(
+                    child: Flexible(
+                      child: Text('Merci de vous connecter à votre profil',
+                          style: Theme.of(context).textTheme.bodyText2),
+                    ),
                   ),
                 ),
                 Padding(
@@ -139,7 +132,7 @@ class _LoginPageState extends NoAuthRequiredState<LoginPage> {
                         child: TextFormField(
                           controller: _emailController,
                           decoration: InputDecoration(
-                            labelText: 'Entrez votre adresse email',
+                            labelText: 'Adresse email',
                             enabledBorder: OutlineInputBorder(
                               borderSide: const BorderSide(
                                 color: Color(0xFFF1F4F8),
@@ -161,7 +154,7 @@ class _LoginPageState extends NoAuthRequiredState<LoginPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 10),
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 10),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -173,7 +166,7 @@ class _LoginPageState extends NoAuthRequiredState<LoginPage> {
                           autocorrect: false,
                           controller: _passwordController,
                           decoration: InputDecoration(
-                            labelText: 'Entrez votre mot de passe',
+                            labelText: 'Mot de passe',
                             enabledBorder: OutlineInputBorder(
                               borderSide: const BorderSide(
                                 color: Color(0xFFF1F4F8),
@@ -194,24 +187,9 @@ class _LoginPageState extends NoAuthRequiredState<LoginPage> {
                     ],
                   ),
                 ),
-                FutureBuilder(
-                  future: _initializeFirebase(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return Column(
-                        children: const [
-                          Text('Login firebase done'),
-                        ],
-                      );
-                    }
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
                 ElevatedButton(
                   onPressed: _isLoading ? null : signInUsingEmailPassword,
-                  child: Text(_isLoading ? 'Chargement...' : 'Envoyer le lien'),
+                  child: Text(_isLoading ? 'Chargement...' : 'Se connecter'),
                 ),
               ],
             ),
